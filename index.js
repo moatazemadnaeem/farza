@@ -21,11 +21,12 @@ app.use(express.json())
 app.use(
     cookieSession({
         signed:false,
-        secure:true,
         maxAge: 30 * 24 * 60 * 60 * 1000
     })
 )
-
+app.use('/',(req,res)=>{
+    res.send('Hello from the api')
+})
 app.use('/api/users',signup)
 app.use('/api/users',signin)
 app.use('/api/users',signout)
