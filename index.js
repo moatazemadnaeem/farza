@@ -13,12 +13,15 @@ const {notfound}=require('./errorclasses/notfound')
 const {BadReqErr}=require('./errorclasses/badReq')
 const app=express()
 const port=process.env.PORT||4000
+app.set('trust proxy',true)
 app.use(cors())
 app.use(express.json())
 //first we make the cookie not encrypted 
+
 app.use(
     cookieSession({
         signed:false,
+        secure:true,
         maxAge: 30 * 24 * 60 * 60 * 1000
     })
 )
