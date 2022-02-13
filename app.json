@@ -1,8 +1,0 @@
-{
-    "name": "GoogleS",
-    "description": "This API handel an Education System with ML",
-    "env": {
-      "JWT_KEY":"MoatazEmadKamelNaeem",
-      "DB_URL":"mongodb+srv://moataz:MoatazEmadNaeem0101@googles.whtsd.mongodb.net/GoogleSDB?retryWrites=true&w=majority"
-    }
-}

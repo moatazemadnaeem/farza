@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express =require('express') 
+const cors=require('cors')
 const cookieSession =require('cookie-session') 
 require('express-async-errors')
 const mongoose =require('mongoose') 
@@ -12,6 +13,7 @@ const {notfound}=require('./errorclasses/notfound')
 const {BadReqErr}=require('./errorclasses/badReq')
 const app=express()
 const port=process.env.PORT||4000
+app.use(cors())
 app.use(express.json())
 //first we make the cookie not encrypted 
 app.use(
