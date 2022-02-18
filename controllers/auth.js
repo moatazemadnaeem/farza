@@ -74,6 +74,9 @@ module.exports={
     },
     current:async(req,res)=>{
         //check first is the session object exist and then check jwt
-         return res.send({currentUser:req.currentUser,status:true||null})
+        if(req.currentUser){
+            return res.send({currentUser:{User:req.currentUser,status:true}})
+        }
+        return res.send({currentUser:null})
     }
 }
