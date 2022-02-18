@@ -28,7 +28,7 @@ module.exports={
           req.session={
               jwt:token
           }
-          return res.status(201).send({name:User.name,email:User.email})
+          return res.status(201).send({name:User.name,email:User.email,status:true,token})
        } 
     },
     signin:async(req,res)=>{
@@ -60,15 +60,20 @@ module.exports={
     //send data
     res.status(200).send({
         name:existingUser.name,
-        email:existingUser.email
+        email:existingUser.email,
+        status:true,
+        token
     })
     },
     signout:async(req,res)=>{
         req.session=null
-        res.send('signed out')
+        res.send({
+            token:null,
+            currentUser:null,
+        })
     },
     current:async(req,res)=>{
         //check first is the session object exist and then check jwt
-         return res.send({currentUser:req.currentUser||null})
+         return res.send({currentUser:req.currentUser,status:true||null})
     }
 }
