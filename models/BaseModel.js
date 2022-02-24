@@ -5,6 +5,12 @@ const CourseSchema=mongoose.Schema({
     },
     description:{
         type:String,
+    },
+    imageSrc:{
+        type:String
+    },
+    courseUrl:{
+        type:String
     }
 })
 const BaseSchema=mongoose.Schema({

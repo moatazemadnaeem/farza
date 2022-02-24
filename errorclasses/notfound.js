@@ -1,12 +1,13 @@
 class notfound extends Error{
-    notfoundmsg='this page is not found';
+    msg='';
     statusCode=404;
-    constructor(){
+    constructor(msg){
         super('you entered the wrong page')
+        this.msg=msg;
         Object.setPrototypeOf(this,notfound.prototype)
     }
     summary(){
-        return [{message:this.notfoundmsg}]
+        return [{message:this.msg}]
     }
 }
 module.exports={notfound}
