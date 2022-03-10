@@ -16,6 +16,7 @@ module.exports={
        }
     },
     getRegisteredCourses:async (req,res)=>{
+        console.log(req.currentUser)
         const {id}=req.currentUser;
         try{
             const User= await user.findById(id);
