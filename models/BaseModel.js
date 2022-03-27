@@ -1,5 +1,8 @@
 const mongoose=require('mongoose')
 const CourseSchema=mongoose.Schema({
+    track:{
+        type:String,
+    },
     title:{
         type:String,
     },
@@ -11,6 +14,9 @@ const CourseSchema=mongoose.Schema({
     },
     courseUrl:{
         type:String
+    },
+    points:{
+        type:Number,
     }
 })
 const BaseSchema=mongoose.Schema({

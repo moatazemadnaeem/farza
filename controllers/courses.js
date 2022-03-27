@@ -1,5 +1,6 @@
 const {user}=require('../models/BaseModel')
 const {notfound} =require('../errorclasses/notfound')
+const {NotAuth}=require('../errorclasses/notauth')
 
 module.exports={
     registerCourses:async (req,res)=>{
@@ -26,3 +27,6 @@ module.exports={
         }
     }
 }
+//each course will have its track html->front html->10 points 
+
+//over all points client will handel it so may be 50 points 30/50 and so on 
