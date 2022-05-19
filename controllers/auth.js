@@ -1,9 +1,11 @@
 const {validationResult} =require('express-validator')
 const {validateincomingreq}=require('../errorclasses/incomingReq')
 const {BadReqErr}=require('../errorclasses/badReq')
+const {notfound}=require('../errorclasses/notfound')
 const {user}=require('../models/BaseModel')
 const {hashPass,comparePass}=require('../utils/password')
 const jwt =require('jsonwebtoken')
+const {ValidateReq} =require('../helpers/customValidator')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -23,7 +25,8 @@ module.exports={
           const token= jwt.sign({
               id:User._id,
               name:User.name,
-              email:User.email
+              email:User.email,
+              IsAdmin:User.IsAdmin
           },process.env.JWT_KEY)
           req.session={
               jwt:token
@@ -51,7 +54,8 @@ module.exports={
     const token= jwt.sign({
         id:existingUser._id,
         name:existingUser.name,
-        email:existingUser.email
+        email:existingUser.email,
+        IsAdmin:existingUser.IsAdmin
     },process.env.JWT_KEY)
     req.session={
         jwt:token
@@ -78,5 +82,34 @@ module.exports={
             return res.send({currentUser:{User:req.currentUser,status:true}})
         }
         return res.send({currentUser:null})
+    },
+    update_user:async(req,res)=>{
+        const {name,email,password}=req.body
+        const {error}=ValidateReq(req.body)
+        if(error){
+            throw new BadReqErr(error.details[0].message)
+        }
+        try{
+           console.log('working')
+           const User= await user.findById(req.currentUser.id)
+           User.name=name?name:User.name;
+           User.email=email?email:User.email;
+           User.password=password?hashPass(password):User.password;
+           await User.save()
+           
+           const token= jwt.sign({
+            id:User._id,
+            name:User.name,
+            email:User.email,
+            IsAdmin:User.IsAdmin
+            },process.env.JWT_KEY)
+
+            req.session={
+                jwt:token
+            }
+            return res.status(201).send({UserUpdated:{name:User.name,email:User.email,status:true,token}})
+        }catch(err){
+           throw new notfound('this user can not be found')
+        }
     }
 }

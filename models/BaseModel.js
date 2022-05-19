@@ -13,6 +13,10 @@ const BaseSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    
-})
+    IsAdmin:{
+        type:Boolean,
+        default:false
+    } 
+},
+{ timestamps: true })
 module.exports={user:mongoose.model('User',BaseSchema)}

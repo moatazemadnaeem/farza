@@ -8,6 +8,7 @@ const { signup } =require('./routes/signup')
 const { signin } =require('./routes/signin') 
 const { signout } =require('./routes/signout') 
 const { current } =require('./routes/current-user') 
+const {updateUser} =require('./routes/update-user')
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
@@ -30,6 +31,7 @@ app.use('/api/users',signup)
 app.use('/api/users',signin)
 app.use('/api/users',signout)
 app.use('/api/users',current)
+app.use('/api/users',updateUser)
 
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
