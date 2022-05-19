@@ -31,7 +31,7 @@ module.exports={
           req.session={
               jwt:token
           }
-          return res.status(201).send({name:User.name,email:User.email,status:true,token})
+          return res.status(201).send({name:User.name,IsAdmin:User.IsAdmin,email:User.email,status:true,token})
        } 
     },
     signin:async(req,res)=>{
@@ -66,6 +66,7 @@ module.exports={
         name:existingUser.name,
         email:existingUser.email,
         status:true,
+        IsAdmin:existingUser.IsAdmin,
         token
     })
     },
@@ -107,7 +108,7 @@ module.exports={
             req.session={
                 jwt:token
             }
-            return res.status(201).send({UserUpdated:{name:User.name,email:User.email,status:true,token}})
+            return res.status(201).send({UserUpdated:{name:User.name,IsAdmin:User.IsAdmin,email:User.email,status:true,token}})
         }catch(err){
            throw new notfound('this user can not be found')
         }
