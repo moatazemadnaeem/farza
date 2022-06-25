@@ -9,7 +9,8 @@ const { signin } =require('./routes/signin')
 const { signout } =require('./routes/signout') 
 const { current } =require('./routes/current-user') 
 const {updateUser} =require('./routes/update-user')
-
+const {delete_user} =require('./routes/deleteUserByAdmin')
+const {get_users} =require('./routes/get_users')
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
 const {BadReqErr}=require('./errorclasses/badReq')
@@ -32,6 +33,8 @@ app.use('/api/users',signin)
 app.use('/api/users',signout)
 app.use('/api/users',current)
 app.use('/api/users',updateUser)
+app.use('/api/users',delete_user)
+app.use('/api/users',get_users)
 
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')

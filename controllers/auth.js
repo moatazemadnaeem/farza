@@ -24,14 +24,11 @@ module.exports={
           const User= await user.create({name,email,password:hashPass(password)})
           const token= jwt.sign({
               id:User._id,
-              name:User.name,
-              email:User.email,
-              IsAdmin:User.IsAdmin
           },process.env.JWT_KEY)
           req.session={
               jwt:token
           }
-          return res.status(201).send({name:User.name,IsAdmin:User.IsAdmin,email:User.email,status:true,token})
+          return res.status(201).send({name:User.name,email:User.email,id:User._id,status:true,token})
        } 
     },
     signin:async(req,res)=>{
@@ -53,9 +50,6 @@ module.exports={
     //send jwt 
     const token= jwt.sign({
         id:existingUser._id,
-        name:existingUser.name,
-        email:existingUser.email,
-        IsAdmin:existingUser.IsAdmin
     },process.env.JWT_KEY)
     req.session={
         jwt:token
@@ -66,7 +60,7 @@ module.exports={
         name:existingUser.name,
         email:existingUser.email,
         status:true,
-        IsAdmin:existingUser.IsAdmin,
+        id:existingUser._id,
         token
     })
     },
@@ -80,37 +74,70 @@ module.exports={
     current:async(req,res)=>{
         //check first is the session object exist and then check jwt
         if(req.currentUser){
-            return res.send({currentUser:{User:req.currentUser,status:true}})
+          try{
+            const {name,email,IsAdmin,_id}= await user.findById(req.currentUser.id)
+            return res.send({currentUser:{
+                name,
+                email,
+                id:_id,
+                status:true
+            }})
+          }catch(err){
+            throw new notfound('this user can not be found')
+          }
+         
         }
         return res.send({currentUser:null})
     },
     update_user:async(req,res)=>{
-        const {name,email,password}=req.body
-        const {error}=ValidateReq(req.body)
-        if(error){
-            throw new BadReqErr(error.details[0].message)
-        }
-        try{
-           console.log('working')
-           const User= await user.findById(req.currentUser.id)
-           User.name=name?name:User.name;
-           User.email=email?email:User.email;
-           User.password=password?hashPass(password):User.password;
-           await User.save()
-           
-           const token= jwt.sign({
-            id:User._id,
-            name:User.name,
-            email:User.email,
-            IsAdmin:User.IsAdmin
-            },process.env.JWT_KEY)
-
-            req.session={
-                jwt:token
+        if(req.currentUser){
+            const {name,email,password}=req.body
+            const {error}=ValidateReq(req.body)
+            if(error){
+                throw new BadReqErr(error.details[0].message)
             }
-            return res.status(201).send({UserUpdated:{name:User.name,IsAdmin:User.IsAdmin,email:User.email,status:true,token}})
+            try{
+               console.log('working')
+               const User= await user.findById(req.currentUser.id)
+               User.name=name?name:User.name;
+               User.email=email?email:User.email;
+               User.password=password?hashPass(password):User.password;
+               await User.save()
+               
+               const token= jwt.sign({
+                id:User._id,
+                },process.env.JWT_KEY)
+    
+                req.session={
+                    jwt:token
+                }
+                return res.status(201).send({UserUpdated:{name:User.name,email:User.email,status:true,token}})
+            }catch(err){
+               throw new notfound('this user can not be found')
+            }
+        }else{
+            return res.send({currentUser:null})
+        }
+       
+    },
+    delete_user:async(req,res)=>{
+        if(req.params.id){
+            try{
+               const User= await user.findByIdAndRemove(req.params.id)
+               res.send('User Deleted Successfully')
+            }catch(err){
+                throw new BadReqErr('This user can not be deleted')
+            }
+        }else{
+            throw new BadReqErr('you did not provide an user id')
+        }
+    },
+    get_users:async(req,res)=>{
+        try{
+            const Users=await user.find({})
+            res.send(Users)
         }catch(err){
-           throw new notfound('this user can not be found')
+            throw new BadReqErr(err.message)
         }
     }
 }

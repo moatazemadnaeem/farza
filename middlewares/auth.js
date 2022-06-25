@@ -1,5 +1,7 @@
 const {NotAuth}=require('../errorclasses/notauth')
 const jwt =require('jsonwebtoken') 
+const {user}=require('../models/BaseModel')
+const {BadReqErr} =require('../errorclasses/badReq')
 const Auth=(req,res,next)=>{
 
     if(req.headers.authentication){
@@ -23,6 +25,18 @@ const Auth=(req,res,next)=>{
   return next()
     
 }
-module.exports={Auth}
+const verifyTokenAndAdmin = async(req, res, next) => {
+    try{
+      const User=await user.findById(req.currentUser.id)
+      if (User.IsAdmin) {
+        next();
+      } else {
+        return next(new NotAuth('You are not admin to do this')) 
+      }
+    }catch(err){
+      return next(new BadReqErr(err.message)) 
+    }
+};
+module.exports={Auth,verifyTokenAndAdmin}
 
 
