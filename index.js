@@ -19,6 +19,8 @@ const {create_seller_route}=require('./routes/SellerRoutes/create-seller')
 const {get_sellers_route}=require('./routes/SellerRoutes/get-sellers')
 const {get_seller_by_user_route} = require('./routes/SellerRoutes/get-sellers-by-user')
 const {add_seller_product_route} = require('./routes/SellerRoutes/add-seller-products')
+const {list_all_products_route} = require('./routes/SellerRoutes/list_all_products')
+const {list_all_products_based_on_categories_route} = require('./routes/SellerRoutes/list_all_products_based_on_categories')
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
@@ -55,6 +57,8 @@ app.use('/api/sellers',create_seller_route)
 app.use('/api/sellers',get_sellers_route)
 app.use('/api/sellers',get_seller_by_user_route)
 app.use('/api/sellers',add_seller_product_route)
+app.use('/api/sellers',list_all_products_route)
+app.use('/api/sellers',list_all_products_based_on_categories_route)
 
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')

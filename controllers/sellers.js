@@ -79,5 +79,58 @@ module.exports={
             throw new BadReqErr(err.message)
         }
         
+    },
+    list_all_products:async(req,res)=>{
+        try{
+            const data=await Seller.find({})
+            const products=[]
+            data.forEach((item)=>{
+                products.push(...item.products)
+            })
+            res.send({status:true,products})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    list_all_products_based_on_categories:async(req,res)=>{
+        const {targetCategories}=req.body
+        const targetLength=targetCategories.length;
+        if(!targetCategories||typeof(targetCategories)!=='object'){
+            throw new BadReqErr('Inputs are not valid please check it again')
+        }
+        try{
+            const data=await Seller.find({})
+            const products=[]
+            //this is one seller
+            data.forEach((item)=>{
+                //first you will map on every product 
+                //get the categories 
+                //check if its cat equal to target cat if so return this product or push this item 
+                //if not do not push it 
+                item.products.forEach((element,index)=>{
+                    const currentCategories=item.products[index].categories
+                    let sum=0;
+                    currentCategories.forEach(r=> {
+                        if(targetCategories.indexOf(r) >= 0){
+                                sum+=1;
+                        }
+                        
+                    })
+                    if(sum!==0){
+                        if(sum<=targetLength){
+                            products.push(item.products[index])
+                        }
+                    }
+                })
+
+            })
+            
+            res.send({status:true,products})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
     }
 }
+//[football,swimming,tshirts] 1
+//lets see if product category holds value or equal to 1 
+//then we will send it back
