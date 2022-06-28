@@ -4,7 +4,6 @@ const ProductSchema=mongoose.Schema({
     title:{
         type: String, 
         required: true, 
-        unique: true
     },
     desc: { 
         type: String, 
@@ -15,7 +14,8 @@ const ProductSchema=mongoose.Schema({
         required: true 
     },
     categories: { 
-        type: Array 
+        type: Array ,
+        required: true 
     },
     price: { 
         type: Number, 
@@ -24,6 +24,10 @@ const ProductSchema=mongoose.Schema({
 })
 
 const SellerSchema=mongoose.Schema({
+    userId:{
+        type:String,
+        required:true,
+    },
     name:{
         type:String,
         required:true,
@@ -36,4 +40,4 @@ const SellerSchema=mongoose.Schema({
     
 },
 { timestamps: true })
-module.exports={user:mongoose.model('Seller',SellerSchema)}
+module.exports={Seller:mongoose.model('Seller',SellerSchema)}
