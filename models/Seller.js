@@ -13,6 +13,9 @@ const ProductSchema=mongoose.Schema({
         type: String, 
         required: true 
     },
+    imgPath:{
+        type: String, 
+    },
     categories: { 
         type: Array ,
         required: true 
@@ -35,6 +38,9 @@ const SellerSchema=mongoose.Schema({
     img:{
         type:String,
         required:true,
+    },
+    imgPath:{
+        type:String,
     },
     products:[ProductSchema],
     

@@ -1,6 +1,6 @@
 const {BadReqErr} =require('../errorclasses/badReq')
 const {notfound}=require('../errorclasses/notfound')
-
+const mongoose =require('mongoose')
 const {Seller} =require('../models/Seller')
 module.exports={
     create_seller:async(req,res)=>{
@@ -23,8 +23,10 @@ module.exports={
             const seller= await Seller.create({
                 userId:req.currentUser.id,
                 name:req.body.name,
-                img:img.name
+                img:img.name,
             })
+            seller.set({imgPath:`https://farza-e-commerce.herokuapp.com/static/${req.currentUser.id}/Sellers/${seller._id}/${img.name} `})
+            await seller.save()
             img.mv(`./images/${req.currentUser.id}/Sellers/${seller._id}/`+ img.name)
 
             res.send({status: true,seller});
@@ -58,6 +60,7 @@ module.exports={
         }
 
         try{
+            const customId=new mongoose.Types.ObjectId().toHexString()
            const seller= await Seller.findById(sellerId)
            const img=req.files.img;
           
@@ -68,12 +71,18 @@ module.exports={
            if(!(typeof(data.price)==="number")){
                data.price=Number(data.price);       
            }
-          
+           data._id=customId;
+
+           const imgPathVar=`https://farza-e-commerce.herokuapp.com/static/${req.currentUser.id}/Sellers/${seller._id}/Products/${customId}/${img.name} `
+           data.imgPath=imgPathVar;
+           
            seller.products.push(data)
 
            await seller.save()
-           const product_id=seller.products[seller.products.length-1]._id
-           img.mv(`./images/${req.currentUser.id}/Sellers/${seller._id}/Products/${product_id}/`+ img.name)
+
+
+           //const product_id=seller.products[seller.products.length-1]._id
+           img.mv(`./images/${req.currentUser.id}/Sellers/${seller._id}/Products/${customId}/`+ img.name)
            res.send({status: true,seller_products:seller.products});
         }catch(err){
             throw new BadReqErr(err.message)
