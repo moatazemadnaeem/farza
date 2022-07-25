@@ -1,7 +1,7 @@
 const express=require('express')
 const {Auth}=require('../../middlewares/auth')
 const router=express.Router()
-const {add_seller_product} =require('../../controllers/sellers')
+const {add_seller_product} =require('../../controllers/products')
 
 //This route will handel creating a seller to access this route you must be authenticated 
 //You can create a multi branches or sellers 

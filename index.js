@@ -18,13 +18,25 @@ const {get_users} =require('./routes/get_users')
 const {create_seller_route}=require('./routes/SellerRoutes/create-seller')
 const {get_sellers_route}=require('./routes/SellerRoutes/get-sellers')
 const {get_seller_by_user_route} = require('./routes/SellerRoutes/get-sellers-by-user')
-const {add_seller_product_route} = require('./routes/SellerRoutes/add-seller-products')
-const {list_all_products_route} = require('./routes/SellerRoutes/list_all_products')
-const {list_all_products_based_on_categories_route} = require('./routes/SellerRoutes/list_all_products_based_on_categories')
+const {add_seller_product_route} = require('./routes/ProductRoutes/add-seller-products')
+const {list_all_products_route} = require('./routes/ProductRoutes/list_all_products')
+const {list_all_products_based_on_categories_route} = require('./routes/ProductRoutes/list_all_products_based_on_categories')
+// Orders
+const {create_order_route}=require('./routes/OrderRoutes/create-order')
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
 const {BadReqErr}=require('./errorclasses/badReq')
+
+const redis = require('redis');
+
+const client = redis.createClient(6379,process.env.REDIS_HOST);
+client.on('connect',()=>{
+    console.log('connected!!!!!!!!')
+})
+client.on('error', err => {
+    console.log('Error ' + err);
+});
 const path = require('path')
 const app=express()
 const port=process.env.PORT||9000
@@ -56,9 +68,12 @@ app.use('/api/users',get_users)
 app.use('/api/sellers',create_seller_route)
 app.use('/api/sellers',get_sellers_route)
 app.use('/api/sellers',get_seller_by_user_route)
-app.use('/api/sellers',add_seller_product_route)
-app.use('/api/sellers',list_all_products_route)
-app.use('/api/sellers',list_all_products_based_on_categories_route)
+//Products
+app.use('/api/products',add_seller_product_route)
+app.use('/api/products',list_all_products_route)
+app.use('/api/products',list_all_products_based_on_categories_route)
+//Orders
+app.use('/api/orders',create_order_route)
 
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')

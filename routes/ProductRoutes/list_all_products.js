@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 
-const {list_all_products} =require('../../controllers/sellers')
+const {list_all_products} =require('../../controllers/products')
 
 
 router.get('/list-all-products',list_all_products)
