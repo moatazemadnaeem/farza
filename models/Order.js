@@ -26,6 +26,9 @@ const OrderSchema = new mongoose.Schema(
           required: true,
           default: 1,
         },
+        imgPath:{
+          type: String,
+        },
         //make sure if an product is reserved or not
         reserved:{
           type: Boolean,

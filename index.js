@@ -23,6 +23,12 @@ const {list_all_products_route} = require('./routes/ProductRoutes/list_all_produ
 const {list_all_products_based_on_categories_route} = require('./routes/ProductRoutes/list_all_products_based_on_categories')
 // Orders
 const {create_order_route}=require('./routes/OrderRoutes/create-order')
+//Cart
+const {add_cart_items_route}=require('./routes/cartRoutes/add')
+const {get_cart_items_route}=require('./routes/cartRoutes/getCartItems')
+const {delete_cart_items_route}=require('./routes/cartRoutes/deleteCartItem')
+const {clear_cart_items_route}=require('./routes/cartRoutes/clearAllCart')
+
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
@@ -74,6 +80,11 @@ app.use('/api/products',list_all_products_route)
 app.use('/api/products',list_all_products_based_on_categories_route)
 //Orders
 app.use('/api/orders',create_order_route)
+//Cart
+app.use('/api/cart',add_cart_items_route)
+app.use('/api/cart',get_cart_items_route)
+app.use('/api/cart',delete_cart_items_route)
+app.use('/api/cart',clear_cart_items_route)
 
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
