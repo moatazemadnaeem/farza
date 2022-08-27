@@ -5,8 +5,7 @@ const mongoose =require('mongoose')
 const {Orders,expireTable}=require('../models/Order')
 const {Products} =require('../models/Products')
 const {order_status}=require('../types/status')
-const {expirationQueue}=require('../queues/expiration_queue')
-const EXPIRATION_SECONDS=1*60;
+
 
 module.exports={
     create_order:async(req,res)=>{
@@ -71,6 +70,7 @@ module.exports={
 
             if(q2>q1){
                 product_found.set({fake_quantity:q2-q1})
+                product_found.set({reserved:false})
                 await product_found.save()
             }
         }
@@ -95,6 +95,6 @@ module.exports={
         })
         return res.status(201).send({status:true,order})
        
-    },
-   
+    }
+ 
 }

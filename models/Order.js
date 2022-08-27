@@ -4,6 +4,7 @@ const expiration=new Date()
 expiration.setSeconds(expiration.getSeconds())
 const {order_status} =require('../types/status')
 const {Products}=require('./Products')
+const EXPIRATION_SECONDS=10*60;
 const OrderSchema = new mongoose.Schema(
   {
     //the user that trying to make the order
@@ -56,7 +57,7 @@ const OrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 const expireSchema = new mongoose.Schema({
-  createdAt: { type: Date, default: expiration, expires: 60 },
+  createdAt: { type: Date, default: Date.now, expires: '5m' },
   orderId: { type:mongoose.Schema.Types.ObjectId, ref: 'order_id'}
 });
 const Orders=mongoose.model("Order", OrderSchema);

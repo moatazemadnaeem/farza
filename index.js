@@ -28,7 +28,9 @@ const {add_cart_items_route}=require('./routes/cartRoutes/add')
 const {get_cart_items_route}=require('./routes/cartRoutes/getCartItems')
 const {delete_cart_items_route}=require('./routes/cartRoutes/deleteCartItem')
 const {clear_cart_items_route}=require('./routes/cartRoutes/clearAllCart')
-
+//Payments
+const {create_payment_route}=require('./routes/PaymentRoutes/create-payment')
+const {get_payment_route}=require('./routes/PaymentRoutes/get_payment')
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
@@ -54,6 +56,7 @@ app.use('/static', express.static(path.join(__dirname, 'images')))
 
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded());
 //first we make the cookie not encrypted 
 //one month the cookie will last 
 app.use(
@@ -85,7 +88,9 @@ app.use('/api/cart',add_cart_items_route)
 app.use('/api/cart',get_cart_items_route)
 app.use('/api/cart',delete_cart_items_route)
 app.use('/api/cart',clear_cart_items_route)
-
+//payments
+app.use('/api/payments',create_payment_route)
+app.use('/api/payments',get_payment_route)
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
 })
