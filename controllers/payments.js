@@ -131,7 +131,7 @@ module.exports={
              __product.set({reserved:false})
               await __product.save()
             }
-            await Payment.create({userId,mobile,orderId:cart_id,msg:'This order is cancelled.'})
+            await Payment.create({userId,mobile,tran_ref,orderId:cart_id,tran_total,customer_details,shipping_details,payment_result,msg:'This order is cancelled.'})
         }catch(err){
             console.log(err.message)
         }
