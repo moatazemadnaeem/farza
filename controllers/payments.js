@@ -116,21 +116,26 @@ module.exports={
        }
        if(payment_result?.response_status==='C'){
         //which means its cancelled 
-        const order= await Orders.findOne({_id:cart_id})
-        const {userId,mobile}=order;
-        order.set({status:order_status.Cancelled})
-        await order.save()
-        const products=order.products;
-        for(let i=0;i<products.length;i++){
-          const item=products[i]
-          
-         const __product= await Products.findById(item.productId)
-         
-         __product.set({fake_quantity:__product.quantity})
-         __product.set({reserved:false})
-          await __product.save()
+        try{
+            const order= await Orders.findOne({_id:cart_id})
+            const {userId,mobile}=order;
+            order.set({status:order_status.Cancelled})
+            await order.save()
+            const products=order.products;
+            for(let i=0;i<products.length;i++){
+              const item=products[i]
+              
+             const __product= await Products.findById(item.productId)
+             
+             __product.set({fake_quantity:__product.quantity})
+             __product.set({reserved:false})
+              await __product.save()
+            }
+            await Payment.create({userId,mobile,orderId:cart_id,msg:'This order is cancelled.'})
+        }catch(err){
+            console.log(err.message)
         }
-        await Payment.create({userId,mobile,orderId:cart_id,msg:'This order is cancelled.'})
+     
        }
        return res.status(201).send('everything went okay')
        
