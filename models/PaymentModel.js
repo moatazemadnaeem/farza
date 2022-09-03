@@ -27,11 +27,9 @@ const PaymentSchema = new mongoose.Schema(
     },
     customer_details:{
         type:Object,
-        required:true
     },
     shipping_details:{
         type:Object,
-        required:true
     },
     payment_result:{
         type:Object,
