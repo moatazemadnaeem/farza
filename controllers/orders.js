@@ -17,10 +17,10 @@ module.exports={
         const data=req.body;
 
         if(data.userId!==req.currentUser.id){
-            throw new NotAuth()
+            throw new NotAuth('not authenticated')
         }
         if(!data.products||data.products.length===0||!data.address||!data.total_amount){
-            throw new BadReqErr()
+            throw new BadReqErr('Inputs are not valid please check it again')
         }
         //create new order with the data
         //then we will push a job to a queue

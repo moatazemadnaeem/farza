@@ -16,7 +16,7 @@ module.exports={
        if(order.status===order_status.Cancelled){
         throw new BadReqErr('this order is cancelled please order it again')
        }
-       const {products,address,total_amount}=order
+       const {total_amount}=order
         
         const paymentRes= await AxiosInstancePayment.post('https://secure-egypt.paytabs.com/payment/request',{
             "profile_id":process.env.MERCHANT_FARZA_ID,
@@ -26,10 +26,7 @@ module.exports={
             "cart_description": `Order for ${req.currentUser.id}`,
             "cart_currency": "EGP",
             "cart_amount": total_amount,
-            "callback": "https://farza-e-commerce.herokuapp.com/api/payments/get-payment",
-            "customer_details": {
-                "address": address,
-            }
+            "callback": "https://farza-e-commerce.herokuapp.com/api/payments/get-payment"
        })
        
         if(paymentRes?.data){
@@ -45,11 +42,9 @@ module.exports={
     },
     get_payment:async(req,res)=>{
        
-        console.log(req)
-        res.send({
-            req,
-            body:req.body
-        })
+       const data=req.body;
+
+       console.log(data)
        
     }
 }
