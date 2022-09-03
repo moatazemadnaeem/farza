@@ -13,7 +13,7 @@ module.exports={
         if(!error.isEmpty()){
             throw new validateincomingreq(error.array())
         }
-        const {name,email,password}=req.body;
+        const {name,email,password,mobile}=req.body;
         console.log(email)
        const exists=await user.findOne({email})
        if(exists){
@@ -21,14 +21,14 @@ module.exports={
        throw new BadReqErr('Email is already in use')
        }
        else{
-          const User= await user.create({name,email,password:hashPass(password)})
+          const User= await user.create({name,email,password:hashPass(password),mobile})
           const token= jwt.sign({
               id:User._id,
           },process.env.JWT_KEY)
           req.session={
               jwt:token
           }
-          return res.status(201).send({name:User.name,email:User.email,id:User._id,status:true,token})
+          return res.status(201).send({name:User.name,email:User.email,mobile,id:User._id,status:true,token})
        } 
     },
     signin:async(req,res)=>{

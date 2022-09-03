@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-
+const {roles}=require('../types/roles')
 const BaseSchema=mongoose.Schema({
     name:{
         type:String,
@@ -13,10 +13,15 @@ const BaseSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    IsAdmin:{
-        type:Boolean,
-        default:false
-    } 
+    mobile:{
+        type:String,
+        required:true,
+    },
+    role: { 
+        type: String,
+        enum:Object.values(roles),
+        default:roles.NORMALSELLER
+    },
 },
 { timestamps: true })
 module.exports={user:mongoose.model('User',BaseSchema)}
