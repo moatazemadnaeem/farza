@@ -92,7 +92,7 @@ module.exports={
     get_payment:async(req,res)=>{
        
        const data=req.body;
-       console.log(data)
+       console.log('data ==>',data)
 
        const {tran_ref,cart_id,tran_total,customer_details,shipping_details,payment_result}=data;
 
