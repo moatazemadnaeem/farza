@@ -6,6 +6,8 @@ const {user}=require('../models/BaseModel')
 const {hashPass,comparePass}=require('../utils/password')
 const jwt =require('jsonwebtoken')
 const {ValidateReq} =require('../helpers/customValidator')
+const {GetRandString}=require('../utils/randomString')
+const {SendEmail} =require('../utils/sendEmail')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -21,13 +23,15 @@ module.exports={
        throw new BadReqErr('Email is already in use')
        }
        else{
-          const User= await user.create({name,email,password:hashPass(password),mobile})
+          const uniqueString=GetRandString()
+          const User= await user.create({name,email,uniqueString,password:hashPass(password),mobile})
           const token= jwt.sign({
               id:User._id,
           },process.env.JWT_KEY)
           req.session={
               jwt:token
           }
+          SendEmail(User.email,User.uniqueString)
           return res.status(201).send({name:User.name,email:User.email,mobile,id:User._id,status:true,token})
        } 
     },

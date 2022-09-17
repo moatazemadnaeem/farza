@@ -22,6 +22,14 @@ const BaseSchema=mongoose.Schema({
         enum:Object.values(roles),
         default:roles.NORMALSELLER
     },
+    IsValid:{
+        type:Boolean,
+        default:false
+    },
+    uniqueString:{
+        type:String,
+        required:true
+    }
 },
 { timestamps: true })
 module.exports={user:mongoose.model('User',BaseSchema)}
