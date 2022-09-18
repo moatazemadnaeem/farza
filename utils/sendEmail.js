@@ -6,7 +6,7 @@ const SendEmail=(email,uniqueString)=>{
         service:'gmail',
         auth:{
             user:'moatazemad772@gmail.com',
-            pass:'zztkerbucknnsjiw'
+            pass:process.env.NODEMAILERPASS
         },
     })
     const mailOptions={
