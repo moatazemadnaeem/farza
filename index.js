@@ -47,7 +47,7 @@ client.on('error', err => {
 });
 const path = require('path')
 const app=express()
-const port=process.env.PORT||9000
+const port=process.env.PORT||3000
 app.use(fileUpload({
     createParentPath: true
 }));
@@ -96,6 +96,7 @@ app.all('*',()=>{
 })
 app.use(handelerr)
 const start=async()=>{
+  
     if(!process.env.JWT_KEY){
         throw new BadReqErr('Jwt is not defined')
     }
