@@ -143,5 +143,22 @@ module.exports={
         }catch(err){
             throw new BadReqErr(err.message)
         }
+    },
+    verfiyUser:async(req,res)=>{
+        const {uniqueString}=req.params;
+        try{
+            const User=await user.findOne({uniqueString})
+    
+            if(User){
+                User.IsValid=true;
+                await User.save()
+                res.send('Done Verifying.')
+            }
+            else{
+                throw new notfound('can not find the user')
+            }
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
     }
 }

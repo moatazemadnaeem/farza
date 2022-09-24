@@ -13,7 +13,7 @@ const SendEmail=(email,uniqueString)=>{
         from:'moatazemad772@gmail.com',
         to:email,
         subject:'Email confirmation',
-        text:`Please Press This Link http://localhost:9000/verfiy/${uniqueString} to verify your email. Thanks`
+        text:`Please Press This Link https://farza-e-commerce.herokuapp.com/api/users/verfiy-user/${uniqueString} to verify your email. Thanks`
     }
     Transport.sendMail(mailOptions,function(err,res){
         if(err){
