@@ -152,7 +152,7 @@ module.exports={
             if(User){
                 User.IsValid=true;
                 await User.save()
-                res.send('Done Verifying.')
+                res.send('<h1>Done Verifying.</h1>')
             }
             else{
                 throw new notfound('can not find the user')
