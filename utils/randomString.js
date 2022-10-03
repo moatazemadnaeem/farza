@@ -6,6 +6,6 @@ const GetRandString=()=>{
         let ch=Math.floor((Math.random()*10)+1);
         randStr+=ch;
     }
-    return randStr;
+    return new Date().getTime().toString()+randStr;
 }
 module.exports={GetRandString}

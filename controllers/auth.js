@@ -23,8 +23,24 @@ module.exports={
        throw new BadReqErr('Email is already in use')
        }
        else{
+            let img=[];
+            if(req.files){
+                if(req.files.img.length===undefined){
+                    img=[req.files.img];
+                }else{
+                    img=[...req.files.img];
+                }
+            }
+        
           const uniqueString=GetRandString()
           const User= await user.create({name,email,uniqueString,password:hashPass(password),mobile})
+          for(let i=0;i<img.length;i++){
+            let item=img[i]
+            let rand=GetRandString()
+            User.imgPath.push(`https://farza-e-commerce.herokuapp.com/static/${rand+item.name}`)
+            await User.save()
+            item.mv(`./images/${rand+item.name}`)
+        }
           const token= jwt.sign({
               id:User._id,
           },process.env.JWT_KEY)
@@ -32,7 +48,7 @@ module.exports={
               jwt:token
           }
           SendEmail(User.email,User.uniqueString)
-          return res.status(201).send({name:User.name,email:User.email,mobile,id:User._id,status:true,token})
+          return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,id:User._id,status:true,token})
        } 
     },
     signin:async(req,res)=>{

@@ -3,12 +3,12 @@ const {notfound}=require('../errorclasses/notfound')
 const mongoose =require('mongoose')
 const {Products}=require('../models/Products')
 const {Seller} =require('../models/Seller')
-
+const {GetRandString}=require('../utils/randomString')
 module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
         //console.log(data,req.files)
-        if(!sellerId||!data||!data.title||!data.price||!data.desc||!req.files||!data.categories||!data.quantity){
+        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.categories||!data.quantity){
             throw new BadReqErr('Inputs are not valid please check it again')
         }
 
@@ -18,9 +18,15 @@ module.exports={
            if(!sellerId){
             throw new notfound()
            }
-           const img=req.files.img;
+           let img=[];
+           if(req.files){
+               if(req.files.img.length===undefined){
+                   img=[req.files.img];
+               }else{
+                   img=[...req.files.img];
+               }
+           }
           
-           data.img=img.name;
            if(!(typeof(data.categories)==="object")){
                data.categories=JSON.parse(data.categories)
            }
@@ -29,10 +35,8 @@ module.exports={
            }
            //product id
            data._id=customId;
-
-           const imgPathVar=`https://farza-e-commerce.herokuapp.com/static/${req.currentUser.id}/Sellers/${seller._id}/Products/${customId}/${img.name} `
            
-           data.imgPath=imgPathVar;
+           data.imgPath=[];
            //company
            data.userId=req.currentUser.id
            //branch
@@ -41,9 +45,14 @@ module.exports={
            data.fake_quantity=data.quantity
 
            const product= await Products.create(data)
-
-           img.mv(`./images/${req.currentUser.id}/Sellers/${seller._id}/Products/${customId}/`+ img.name)
-
+           for(let i=0;i<img.length;i++){
+            let item=img[i]
+            let rand=GetRandString()
+            data.imgPath.push(`https://farza-e-commerce.herokuapp.com/static/${rand+item.name}`)
+            item.mv(`./images/${rand+item.name}`)
+         }
+           product.set({imgPath:data.imgPath})
+           await product.save()
            res.send({status: true,product});
         }catch(err){
             throw new BadReqErr(err.message)

@@ -29,7 +29,10 @@ const BaseSchema=mongoose.Schema({
     uniqueString:{
         type:String,
         required:true
-    }
+    },
+    imgPath:{
+        type:[String],
+    },
 },
 { timestamps: true })
 module.exports={user:mongoose.model('User',BaseSchema)}

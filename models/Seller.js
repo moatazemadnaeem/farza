@@ -9,12 +9,8 @@ const SellerSchema=mongoose.Schema({
         type:String,
         required:true,
     },
-    img:{
-        type:String,
-        required:true,
-    },
     imgPath:{
-        type:String,
+        type:[String],
     },
 },
 { timestamps: true })
