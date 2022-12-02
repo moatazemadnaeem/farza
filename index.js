@@ -37,15 +37,7 @@ const { handelerr } =require('./middlewares/handelError')
 const {notfound}=require('./errorclasses/notfound')
 const {BadReqErr}=require('./errorclasses/badReq')
 
-const redis = require('redis');
 
-const client = redis.createClient(6379,process.env.REDIS_HOST);
-client.on('connect',()=>{
-    console.log('connected!!!!!!!!')
-})
-client.on('error', err => {
-    console.log('Error ' + err);
-});
 const path = require('path')
 const app=express()
 const port=process.env.PORT||9000
