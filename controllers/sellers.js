@@ -1,6 +1,8 @@
 const {BadReqErr} =require('../errorclasses/badReq')
 const {Seller} =require('../models/Seller')
 const {GetRandString} =require('../utils/randomString')
+const path = require('path')
+
 module.exports={
     create_seller:async(req,res)=>{
         if(!req.body.name||req.body.name.length===0){
@@ -25,7 +27,7 @@ module.exports={
                 let rand=GetRandString()
                 seller.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
                 await seller.save()
-                item.mv(`./images/${rand+item.name}`)
+                item.mv(`${path.join(__dirname, 'images/')}${rand+item.name}`)
             }
             res.send({status: true,seller});
         }catch(err){
