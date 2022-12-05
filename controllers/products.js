@@ -48,7 +48,7 @@ module.exports={
            for(let i=0;i<img.length;i++){
             let item=img[i]
             let rand=GetRandString()
-            data.imgPath.push(`https://farza-e-commerce.herokuapp.com/static/${rand+item.name}`)
+            data.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
             item.mv(`./images/${rand+item.name}`)
          }
            product.set({imgPath:data.imgPath})

@@ -23,7 +23,7 @@ module.exports={
             for(let i=0;i<img.length;i++){
                 let item=img[i]
                 let rand=GetRandString()
-                seller.imgPath.push(`https://farza-e-commerce.herokuapp.com/static/${rand+item.name}`)
+                seller.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
                 await seller.save()
                 item.mv(`./images/${rand+item.name}`)
             }

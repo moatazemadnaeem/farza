@@ -76,7 +76,7 @@ module.exports={
             "cart_description": `Order for ${req.currentUser.id}`,
             "cart_currency": "EGP",
             "cart_amount": total_amount,
-            "callback": "https://farza-e-commerce.herokuapp.com/api/payments/get-payment"
+            "callback": "https://mushy-cow-lapel.cyclic.app/api/payments/get-payment"
        })
        
         if(paymentRes?.data){
