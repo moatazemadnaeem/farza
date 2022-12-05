@@ -30,7 +30,7 @@ module.exports={
                 await s3.putObject({
                     Body: JSON.stringify(req.body),
                     Bucket: process.env.BUCKET,
-                    Key: item.stringify(),
+                    Key: JSON.stringify(item),
                   }).promise()
             }
             res.send({status: true,seller});
