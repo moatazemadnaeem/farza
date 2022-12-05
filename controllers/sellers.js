@@ -22,9 +22,11 @@ module.exports={
                 userId:req.currentUser.id,
                 name:req.body.name,
             })
+
            
             for(let i=0;i<img.length;i++){
                 let item=img[i]
+                console.log(item)
                 await s3.putObject({
                     Body: JSON.stringify(req.body),
                     Bucket: process.env.BUCKET,
