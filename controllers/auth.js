@@ -8,6 +8,8 @@ const jwt =require('jsonwebtoken')
 const {ValidateReq} =require('../helpers/customValidator')
 const {GetRandString}=require('../utils/randomString')
 const {SendEmail} =require('../utils/sendEmail')
+const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
+const {uploadToCloudinary}=require('../utils/uploadImg')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -36,10 +38,12 @@ module.exports={
           const User= await user.create({name,email,uniqueString,password:hashPass(password),mobile})
           for(let i=0;i<img.length;i++){
             let item=img[i]
-            let rand=GetRandString()
-            User.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
+            const fileFormat = item.mimetype.split('/')[1]
+            const { base64 } = bufferToDataURI(fileFormat, item.data)
+            const imageDetails = await uploadToCloudinary(base64, fileFormat)
+            console.log(imageDetails)
+            User.imgPath.push(imageDetails.url)
             await User.save()
-            item.mv(`./images/${rand+item.name}`)
         }
           SendEmail(User.email,User.uniqueString)
           return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,id:User._id,status:true})
@@ -90,12 +94,12 @@ module.exports={
         if(req.currentUser){
           try{
             const {name,email,IsAdmin,_id}= await user.findById(req.currentUser.id)
-            return res.send({currentUser:{
+            return res.send({
                 name,
                 email,
                 id:_id,
                 status:true
-            }})
+            })
           }catch(err){
             throw new notfound('this user can not be found')
           }

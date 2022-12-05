@@ -4,6 +4,8 @@ const mongoose =require('mongoose')
 const {Products}=require('../models/Products')
 const {Seller} =require('../models/Seller')
 const {GetRandString}=require('../utils/randomString')
+const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
+const {uploadToCloudinary}=require('../utils/uploadImg')
 module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
@@ -47,9 +49,11 @@ module.exports={
            const product= await Products.create(data)
            for(let i=0;i<img.length;i++){
             let item=img[i]
-            let rand=GetRandString()
-            data.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
-            item.mv(`./images/${rand+item.name}`)
+            const fileFormat = item.mimetype.split('/')[1]
+            const { base64 } = bufferToDataURI(fileFormat, item.data)
+            const imageDetails = await uploadToCloudinary(base64, fileFormat)
+            console.log(imageDetails)
+            data.imgPath.push(imageDetails.url)
          }
            product.set({imgPath:data.imgPath})
            await product.save()

@@ -1,6 +1,8 @@
 const {BadReqErr} =require('../errorclasses/badReq')
 const {Seller} =require('../models/Seller')
 const {GetRandString} =require('../utils/randomString')
+const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
+const {uploadToCloudinary}=require('../utils/uploadImg')
 module.exports={
     create_seller:async(req,res)=>{
         if(!req.body.name||req.body.name.length===0){
@@ -23,10 +25,13 @@ module.exports={
            
             for(let i=0;i<img.length;i++){
                 let item=img[i]
-                let rand=GetRandString()
-                seller.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
+                console.log(item)
+                const fileFormat = item.mimetype.split('/')[1]
+                const { base64 } = bufferToDataURI(fileFormat, item.data)
+                const imageDetails = await uploadToCloudinary(base64, fileFormat)
+                console.log(imageDetails)
+                seller.imgPath.push(imageDetails.url)
                 await seller.save()
-                item.mv(`./images/${rand+item.name}`)
             }
             res.send({status: true,seller});
         }catch(err){
