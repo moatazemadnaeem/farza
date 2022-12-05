@@ -1,6 +1,8 @@
 const {BadReqErr} =require('../errorclasses/badReq')
 const {Seller} =require('../models/Seller')
 const {GetRandString} =require('../utils/randomString')
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3()
 module.exports={
     create_seller:async(req,res)=>{
         if(!req.body.name||req.body.name.length===0){
@@ -20,12 +22,14 @@ module.exports={
                 userId:req.currentUser.id,
                 name:req.body.name,
             })
+           
             for(let i=0;i<img.length;i++){
                 let item=img[i]
-                let rand=GetRandString()
-                seller.imgPath.push(`https://mushy-cow-lapel.cyclic.app/static/${rand+item.name}`)
-                await seller.save()
-                item.mv(`./images/${rand+item.name}`)
+                await s3.putObject({
+                    Body: JSON.stringify(req.body),
+                    Bucket: process.env.BUCKET,
+                    Key: item,
+                  }).promise()
             }
             res.send({status: true,seller});
         }catch(err){
