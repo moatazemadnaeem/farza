@@ -4,6 +4,6 @@ const router=express.Router()
 const {list_all_products_based_on_categories} =require('../../controllers/products')
 
 
-router.get('/list-all-products-based-on-categories',list_all_products_based_on_categories)
+router.post('/list-all-products-based-on-categories',list_all_products_based_on_categories)
 
 module.exports={list_all_products_based_on_categories_route:router}
