@@ -5,10 +5,11 @@ const {BadReqErr} =require('../errorclasses/badReq')
 const {roles}=require('../types/roles')
 const {IsValidUser}=require('../utils/IsValidUser')
 const Auth=async(req,res,next)=>{
-    
-    if(req.headers.authentication){
+   
+    if(req.headers.authentication||req.body.authentication){
         try{
-            const payload= jwt.verify(req.headers.authentication,process.env.JWT_KEY)
+            const authentication=req.headers.authentication?req.headers.authentication:req.body.authentication
+            const payload= jwt.verify(authentication,process.env.JWT_KEY)
             req.currentUser=payload
             const validated= await IsValidUser(payload)
             if(!validated){
@@ -50,9 +51,10 @@ const verifyTokenAndAdmin = async(req, res, next) => {
     return next(new BadReqErr(err.message)) 
   }
 
-    if(req.headers.authentication){
+    if(req.headers.authentication||req.body.authentication){
       try{
-          const payload= jwt.verify(req.headers.authentication,process.env.JWT_KEY)
+          const authentication=req.headers.authentication?req.headers.authentication:req.body.authentication
+          const payload= jwt.verify(authentication,process.env.JWT_KEY)
           req.currentUser=payload
         }catch(err){
           return next(new NotAuth('You are not authenticated')) 
