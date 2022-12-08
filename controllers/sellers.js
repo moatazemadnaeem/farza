@@ -33,7 +33,7 @@ module.exports={
                 seller.imgPath.push(imageDetails.url)
                 await seller.save()
             }
-            res.send({status: true,seller});
+            res.send({status: true,seller,image:seller.imgPath.length===0?'no image':seller.imgPath[0]});
         }catch(err){
             throw new BadReqErr(err.message)
 
