@@ -63,6 +63,36 @@ module.exports={
         }
         
     },
+    add_image_product:async(req,res)=>{
+        const {productId}=req.body;
+        if(!productId){
+            throw new BadReqErr('Please provide product Id')
+        }
+        try{
+            const product= await Products.findById(productId)
+            if(!product){
+                throw new notfound('not found the product')
+            }
+            let img=[];
+            if(req.files){
+                if(req.files.img.length===undefined){
+                    img=[req.files.img];
+                }else{
+                    img=[...req.files.img];
+                }
+            }
+            for(let i=0;i<img.length;i++){
+                let item=img[i]
+                const fileFormat = item.mimetype.split('/')[1]
+                const { base64 } = bufferToDataURI(fileFormat, item.data)
+                const imageDetails = await uploadToCloudinary(base64, fileFormat)
+                console.log(imageDetails)
+                product.imgPath.push(imageDetails.url)
+             }
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
     list_all_products:async(req,res)=>{
         try{
             const data=await Products.find({})

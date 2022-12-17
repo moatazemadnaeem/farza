@@ -19,7 +19,9 @@ const {verfiy_user}=require('./routes/verfiy-user')
 const {create_seller_route}=require('./routes/SellerRoutes/create-seller')
 const {get_sellers_route}=require('./routes/SellerRoutes/get-sellers')
 const {get_seller_by_user_route} = require('./routes/SellerRoutes/get-sellers-by-user')
+//Products
 const {add_seller_product_route} = require('./routes/ProductRoutes/add-seller-products')
+const {add_image_product_route}=require('./routes/ProductRoutes/add_image_product')
 const {list_all_products_route} = require('./routes/ProductRoutes/list_all_products')
 const {list_all_products_based_on_categories_route} = require('./routes/ProductRoutes/list_all_products_based_on_categories')
 // Orders
@@ -76,6 +78,7 @@ app.use('/api/sellers',get_seller_by_user_route)
 app.use('/api/products',add_seller_product_route)
 app.use('/api/products',list_all_products_route)
 app.use('/api/products',list_all_products_based_on_categories_route)
+app.use('/api/products',add_image_product_route)
 //Orders
 app.use('/api/orders',create_order_route)
 //Cart
