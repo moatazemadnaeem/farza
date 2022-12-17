@@ -90,7 +90,7 @@ module.exports={
                 product.imgPath.push(imageDetails.url)
                 await product.save()
              }
-             return res.status(201).send({status:true,product})
+             return res.status(201).send({status:true,images:product.imgPath})
         }catch(err){
             throw new BadReqErr(err.message)
         }
