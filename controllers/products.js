@@ -89,6 +89,7 @@ module.exports={
                 console.log(imageDetails)
                 product.imgPath.push(imageDetails.url)
              }
+             return res.status(201).send({status:true,product})
         }catch(err){
             throw new BadReqErr(err.message)
         }
