@@ -88,6 +88,7 @@ module.exports={
                 const imageDetails = await uploadToCloudinary(base64, fileFormat)
                 console.log(imageDetails)
                 product.imgPath.push(imageDetails.url)
+                await product.save()
              }
              return res.status(201).send({status:true,product})
         }catch(err){
