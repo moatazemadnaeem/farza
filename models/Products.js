@@ -14,7 +14,7 @@ const ProductSchema=mongoose.Schema({
     },
     categories: { 
         type: Array ,
-        required: true 
+     
     },
     price: { 
         type: Number, 

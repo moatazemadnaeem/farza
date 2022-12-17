@@ -10,14 +10,14 @@ module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
         //console.log(data,req.files)
-        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.categories||!data.quantity){
+        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.quantity){
             throw new BadReqErr('Inputs are not valid please check it again')
         }
 
         try{
            const customId=new mongoose.Types.ObjectId().toHexString()
            const seller= await Seller.findById(sellerId)
-           if(!sellerId){
+           if(!seller){
             throw new notfound()
            }
            let img=[];
@@ -29,9 +29,9 @@ module.exports={
                }
            }
           
-           if(!(typeof(data.categories)==="object")){
-               data.categories=JSON.parse(data.categories)
-           }
+        //    if(!(typeof(data.categories)==="object")){
+        //        data.categories=JSON.parse(data.categories)
+        //    }
            if(!(typeof(data.price)==="number")){
                data.price=Number(data.price);       
            }
