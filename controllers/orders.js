@@ -44,6 +44,9 @@ module.exports={
         }
         try{
             const order=await Orders.findById(orderId)
+            if(!order){
+                throw new notfound('can not find this order')
+            }
             order.set({status:order_status.Delivered})
             return res.send({status:true,order})
         }catch(err){
