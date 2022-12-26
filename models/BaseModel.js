@@ -24,11 +24,10 @@ const BaseSchema=mongoose.Schema({
     },
     IsValid:{
         type:Boolean,
-        default:false
+        default:true
     },
     uniqueString:{
         type:String,
-        required:true
     },
     imgPath:{
         type:[String],

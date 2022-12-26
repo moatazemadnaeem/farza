@@ -34,8 +34,8 @@ module.exports={
                 }
             }
         
-          const uniqueString=GetRandString()
-          const User= await user.create({name,email,uniqueString,password:hashPass(password),mobile})
+        //   const uniqueString=GetRandString()
+          const User= await user.create({name,email,password:hashPass(password),mobile})
           for(let i=0;i<img.length;i++){
             let item=img[i]
             const fileFormat = item.mimetype.split('/')[1]
@@ -45,7 +45,7 @@ module.exports={
             User.imgPath.push(imageDetails.url)
             await User.save()
         }
-          SendEmail(User.email,User.uniqueString)
+        //   SendEmail(User.email,User.uniqueString)
           return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,id:User._id,status:true})
        } 
     },

@@ -57,7 +57,8 @@ module.exports={
          }
            product.set({imgPath:data.imgPath})
            await product.save()
-           res.send({status: true,product});
+           console.log(seller)
+           res.send({status: true,product,seller});
         }catch(err){
             throw new BadReqErr(err.message)
         }

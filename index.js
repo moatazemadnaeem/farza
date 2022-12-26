@@ -69,7 +69,7 @@ app.use('/api/users',current)
 app.use('/api/users',updateUser)
 app.use('/api/users',delete_user)
 app.use('/api/users',get_users)
-app.use('/api/users',verfiy_user)
+// app.use('/api/users',verfiy_user)
 //Sellers
 app.use('/api/sellers',create_seller_route)
 app.use('/api/sellers',get_sellers_route)
