@@ -15,10 +15,10 @@ module.exports={
 
        try{
        const order= await Orders.findOne({_id:orderId})
-       if(order.status===order_status.Cancelled){
-        throw new BadReqErr('this order is cancelled please order it again')
-       }
-       const {total_amount,products}=order
+        //    if(order.status===order_status.Cancelled){
+        //     throw new BadReqErr('this order is cancelled please order it again')
+        //    }
+       const {total_amount,products,address,mobile,userId}=order
        let error_message=false
        for(let i=0;i< products.length;i++){
             const item=products[i]
@@ -55,11 +55,13 @@ module.exports={
             if(q1===q2){
                 //the sub is should happen when we success purshase
                 product_found.set({fake_quantity:q2-q1})
+                product_found.set({quantity:q2-q1})
                 product_found.set({reserved:true})
                 await product_found.save()
             }
             if(q2>q1){
                 product_found.set({fake_quantity:q2-q1})
+                product_found.set({quantity:q2-q1})
                 product_found.set({reserved:false})
                 await product_found.save()
             }
@@ -68,22 +70,19 @@ module.exports={
        if(error_message){
          return res.status(error_message.statusCode).send(error_message)
        }
-        const paymentRes= await AxiosInstancePayment.post('https://secure-egypt.paytabs.com/payment/request',{
-            "profile_id":process.env.MERCHANT_FARZA_ID,
-            "tran_type": "sale",
-            "tran_class": "ecom" ,
-            "cart_id":orderId,
-            "cart_description": `Order for ${req.currentUser.id}`,
-            "cart_currency": "EGP",
-            "cart_amount": total_amount,
-            "callback": "https://mushy-cow-lapel.cyclic.app/api/payments/get-payment"
-       })
+        //     const paymentRes= await AxiosInstancePayment.post('https://secure-egypt.paytabs.com/payment/request',{
+        //         "profile_id":process.env.MERCHANT_FARZA_ID,
+        //         "tran_type": "sale",
+        //         "tran_class": "ecom" ,
+        //         "cart_id":orderId,
+        //         "cart_description": `Order for ${req.currentUser.id}`,
+        //         "cart_currency": "EGP",
+        //         "cart_amount": total_amount,
+        //         "callback": "https://mushy-cow-lapel.cyclic.app/api/payments/get-payment"
+        //    })
        
-        if(paymentRes?.data){
-            res.send(paymentRes.data)
-        }else{
-            throw new BadReqErr('something went wrong while preparing the payment link')
-        }
+        order.set({status:order_status.AwaitingDelivering})
+        return res.send({status:true,order})
        }
        catch(err){  
         throw new BadReqErr(err.message)

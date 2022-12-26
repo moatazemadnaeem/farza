@@ -28,6 +28,27 @@ module.exports={
      
         return res.status(201).send({status:true,order})
        
+    },
+    get_awaiting_delivering_orders:async(req,res)=>{
+        try{
+            const orders=await Orders.find({status:order_status.AwaitingDelivering})
+            return res.send({status:true,orders})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    mark_order_as_delivered:async(req,res)=>{
+        const {orderId}=req.body;
+        if(!orderId){
+            throw new BadReqErr('please provide order id')
+        }
+        try{
+            const order=await Orders.findById(orderId)
+            order.set({status:order_status.Delivered})
+            return res.send({status:true,order})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
     }
  
 }

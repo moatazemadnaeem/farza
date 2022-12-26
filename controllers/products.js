@@ -29,9 +29,9 @@ module.exports={
                }
            }
           
-        //    if(!(typeof(data.categories)==="object")){
-        //        data.categories=JSON.parse(data.categories)
-        //    }
+           if(data.categories&&!(typeof(data.categories)==="object")){
+               data.categories=JSON.parse(data.categories)
+           }
            if(!(typeof(data.price)==="number")){
                data.price=Number(data.price);       
            }
@@ -45,7 +45,7 @@ module.exports={
            data.sellerId=sellerId
            //quantity
            data.fake_quantity=data.quantity
-
+    
            const product= await Products.create(data)
            for(let i=0;i<img.length;i++){
             let item=img[i]
@@ -99,7 +99,17 @@ module.exports={
     list_all_products:async(req,res)=>{
         try{
             const data=await Products.find({})
-            res.send({status:true,products:data})
+            const p=[]
+            for(let i=0;i<data.length;i++){
+                const item=data[i]
+                const sellerId=item.sellerId
+                console.log(item)
+                const seller= await Seller.findById(sellerId)
+                console.log(seller)
+                p.push({sellerName:seller?seller.name:'No seller',item}) 
+            }
+           
+            res.send({status:true,products:p})
         }catch(err){
             throw new BadReqErr(err.message)
         }
@@ -114,9 +124,14 @@ module.exports={
             const data=await Products.find({categories:{
                 $all:targetCategories
             }})
-            
-            
-            res.send({status:true,products:data})
+            const p=[]
+            for(let i=0;i<data.length;i++){
+                const item=data[i]
+                const sellerId=item.sellerId
+                const seller= await Seller.findById(sellerId)
+                p.push({sellerName:seller?seller.name:'No seller',item}) 
+            }    
+            res.send({status:true,products:p})
         }catch(err){
             throw new BadReqErr(err.message)
         }

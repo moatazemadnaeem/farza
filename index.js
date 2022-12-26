@@ -26,6 +26,8 @@ const {list_all_products_route} = require('./routes/ProductRoutes/list_all_produ
 const {list_all_products_based_on_categories_route} = require('./routes/ProductRoutes/list_all_products_based_on_categories')
 // Orders
 const {create_order_route}=require('./routes/OrderRoutes/create-order')
+const {awaiting_delivering_route}=require('./routes/OrderRoutes/awaiting_delivering')
+const {mark_delivered_route}=require('./routes/OrderRoutes/mark_order_delivered')
 //Cart
 const {add_cart_items_route}=require('./routes/cartRoutes/add')
 const {get_cart_items_route}=require('./routes/cartRoutes/getCartItems')
@@ -81,6 +83,8 @@ app.use('/api/products',list_all_products_based_on_categories_route)
 app.use('/api/products',add_image_product_route)
 //Orders
 app.use('/api/orders',create_order_route)
+app.use('/api/orders',awaiting_delivering_route)
+app.use('/api/orders',mark_delivered_route)
 //Cart
 app.use('/api/cart',add_cart_items_route)
 app.use('/api/cart',get_cart_items_route)
@@ -88,7 +92,7 @@ app.use('/api/cart',delete_cart_items_route)
 app.use('/api/cart',clear_cart_items_route)
 //payments
 app.use('/api/payments',create_payment_route)
-app.use('/api/payments',get_payment_route)
+// app.use('/api/payments',get_payment_route)
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
 })
