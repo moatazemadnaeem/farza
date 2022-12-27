@@ -58,7 +58,7 @@ module.exports={
            product.set({imgPath:data.imgPath})
            await product.save()
            console.log(seller)
-           res.send({status: true,product,seller});
+           res.send({status: true,product:{...product.toObject({ virtuals: false }),sellerName:seller?seller.name:'No seller'}});
         }catch(err){
             throw new BadReqErr(err.message)
         }
@@ -106,7 +106,7 @@ module.exports={
                 console.log(item)
                 const seller= await Seller.findById(sellerId)
                 console.log(seller)
-                p.push({sellerName:seller?seller.name:'No seller',item}) 
+                p.push({sellerName:seller?seller.name:'No seller',...item.toObject({ virtuals: false })}) 
             }
            
             res.send({status:true,products:p})
@@ -129,7 +129,7 @@ module.exports={
                 const item=data[i]
                 const sellerId=item.sellerId
                 const seller= await Seller.findById(sellerId)
-                p.push({sellerName:seller?seller.name:'No seller',item}) 
+                p.push({sellerName:seller?seller.name:'No seller',...item.toObject({ virtuals: false })}) 
             }    
             res.send({status:true,products:p})
         }catch(err){
