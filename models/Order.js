@@ -7,7 +7,7 @@ const OrderSchema = new mongoose.Schema(
     products: [
       {
         //the company
-        userId: { type: String, required: true },
+        userId: { type: String },
         //the branch of the company
         sellerId:{
           type: String,
