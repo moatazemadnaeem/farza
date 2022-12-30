@@ -10,7 +10,7 @@ module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
         //console.log(data,req.files)
-        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.quantity){
+        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.quantity||!data.factory||!data.warranty){
             throw new BadReqErr('Inputs are not valid please check it again')
         }
 

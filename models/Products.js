@@ -39,6 +39,14 @@ const ProductSchema=mongoose.Schema({
         type: Number,
         default: 10,
     },
+    factory:{
+        type:String,
+        required:true,
+    },
+    warranty:{
+        type:String,
+        required:true,
+    },
     //reserved bool to mark a product as reserved or not
     reserved:{
         type:Boolean,
