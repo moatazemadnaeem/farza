@@ -31,7 +31,7 @@ module.exports={
     },
     get_awaiting_delivering_orders:async(req,res)=>{
         try{
-            const orders=await Orders.find({status:order_status.AwaitingDelivering})
+            const orders=await Orders.find({status:'awaiting-delivering'})
             return res.send({status:true,orders})
         }catch(err){
             throw new BadReqErr(err.message)

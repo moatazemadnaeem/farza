@@ -82,6 +82,7 @@ module.exports={
         //    })
        
         order.set({status:order_status.AwaitingDelivering})
+        await order.save()
         return res.send({status:true,order})
        }
        catch(err){  

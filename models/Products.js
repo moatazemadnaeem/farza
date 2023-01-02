@@ -47,6 +47,10 @@ const ProductSchema=mongoose.Schema({
         type:String,
         required:true,
     },
+    accepted:{
+        type:Boolean,
+        default: false,
+    },
     //reserved bool to mark a product as reserved or not
     reserved:{
         type:Boolean,

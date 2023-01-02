@@ -98,7 +98,7 @@ module.exports={
     },
     list_all_products:async(req,res)=>{
         try{
-            const data=await Products.find({})
+            const data=await Products.find({accepted:true})
             const p=[]
             for(let i=0;i<data.length;i++){
                 const item=data[i]
@@ -121,7 +121,7 @@ module.exports={
         }
         try{
             //if one element in categories in the product exist in the target 
-            const data=await Products.find({categories:{
+            const data=await Products.find({accepted:true,categories:{
                 $all:targetCategories
             }})
             const p=[]
@@ -132,6 +132,36 @@ module.exports={
                 p.push({sellerName:seller?seller.name:'No seller',...item.toObject({ virtuals: false })}) 
             }    
             res.send({status:true,products:p})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    accept_product:async(req,res)=>{
+        const {productId}=req.body;
+        if(!productId){
+            throw new BadReqErr('Inputs are not valid please check it again')
+        }
+        try{
+            const p=await Products.findById(productId)
+            p.accepted=true;
+            await p.save()
+            return res.send({status:true,product:p})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    list_not_accepted_products:async(req,res)=>{
+        try{
+            const p=await Products.find({accepted:false})
+            return res.send({status:true,products:p})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    list_accepted_products:async(req,res)=>{
+        try{
+            const p=await Products.find({accepted:true})
+            return res.send({status:true,products:p})
         }catch(err){
             throw new BadReqErr(err.message)
         }
