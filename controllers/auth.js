@@ -10,6 +10,7 @@ const {GetRandString}=require('../utils/randomString')
 const {SendEmail} =require('../utils/sendEmail')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
 const {uploadToCloudinary}=require('../utils/uploadImg')
+const {roles}=require('../types/roles')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -79,6 +80,7 @@ module.exports={
         email:existingUser.email,
         status:true,
         id:existingUser._id,
+        IsAdmin:existingUser.role===roles.ADMIN?true:false,
         token
     })
     },
