@@ -152,7 +152,14 @@ module.exports={
     },
     list_not_accepted_products:async(req,res)=>{
         try{
-            const p=await Products.find({accepted:false})
+            const data=await Products.find({accepted:false})
+            const p=[]
+            for(let i=0;i<data.length;i++){
+                const item=data[i]
+                const sellerId=item.sellerId
+                const seller= await Seller.findById(sellerId)
+                p.push({sellerName:seller?seller.name:'No seller',...item.toObject({ virtuals: false })}) 
+            }    
             return res.send({status:true,products:p})
         }catch(err){
             throw new BadReqErr(err.message)
