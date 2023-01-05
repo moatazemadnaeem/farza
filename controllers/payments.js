@@ -18,58 +18,58 @@ module.exports={
         //    if(order.status===order_status.Cancelled){
         //     throw new BadReqErr('this order is cancelled please order it again')
         //    }
-       const {total_amount,products,address,mobile,userId}=order
-       let error_message=false
-       for(let i=0;i< products.length;i++){
-            const item=products[i]
-            //the quantity that a person trying to purchase
-            const q1= item.quantity
-            let product_found=false;
-            try{
-                product_found=await Products.findById(item.productId)
-            }catch(err){
-                error_message={statusCode:400,status:false,msg:err.message}
-                break;
-            }
+    //    const {total_amount,products,address,mobile,userId}=order
+    //    let error_message=false
+    //    for(let i=0;i< products.length;i++){
+    //         const item=products[i]
+    //         //the quantity that a person trying to purchase
+    //         const q1= item.quantity
+    //         let product_found=false;
+    //         try{
+    //             product_found=await Products.findById(item.productId)
+    //         }catch(err){
+    //             error_message={statusCode:400,status:false,msg:err.message}
+    //             break;
+    //         }
 
-            if(!product_found){
-                error_message={statusCode:404,status:false,msg:'this product is not found',item}
-                break;
-            }
+    //         if(!product_found){
+    //             error_message={statusCode:404,status:false,msg:'this product is not found',item}
+    //             break;
+    //         }
 
-            if(product_found.reserved){
-                error_message={statusCode:400,status:false,msg:'the product is already reserved',item}
-                break;
-            }
+    //         if(product_found.reserved){
+    //             error_message={statusCode:400,status:false,msg:'the product is already reserved',item}
+    //             break;
+    //         }
 
-            const q2=product_found.fake_quantity
+    //         const q2=product_found.fake_quantity
         
-            if(q1>q2){
-                error_message={statusCode:400,status:false,msg:'you are trying to purchase too many items from this product but the store does not have those many items',item}
-                break;
-            }
-            if(q1<=0){
-                error_message={statusCode:400,status:false,msg:'You ordered zero product please try to add a product',item}
-                break;
-            }
-            if(q1===q2){
-                //the sub is should happen when we success purshase
-                product_found.set({fake_quantity:q2-q1})
-                product_found.set({quantity:q2-q1})
-                product_found.set({reserved:true})
-                await product_found.save()
-            }
-            if(q2>q1){
-                product_found.set({fake_quantity:q2-q1})
-                product_found.set({quantity:q2-q1})
-                product_found.set({reserved:false})
-                await product_found.save()
-            }
-       }
+    //         if(q1>q2){
+    //             error_message={statusCode:400,status:false,msg:'you are trying to purchase too many items from this product but the store does not have those many items',item}
+    //             break;
+    //         }
+    //         if(q1<=0){
+    //             error_message={statusCode:400,status:false,msg:'You ordered zero product please try to add a product',item}
+    //             break;
+    //         }
+    //         if(q1===q2){
+    //             //the sub is should happen when we success purshase
+    //             product_found.set({fake_quantity:q2-q1})
+    //             product_found.set({quantity:q2-q1})
+    //             product_found.set({reserved:true})
+    //             await product_found.save()
+    //         }
+    //         if(q2>q1){
+    //             product_found.set({fake_quantity:q2-q1})
+    //             product_found.set({quantity:q2-q1})
+    //             product_found.set({reserved:false})
+    //             await product_found.save()
+    //         }
+    //    }
      
-       if(error_message){
-         return res.status(error_message.statusCode).send(error_message)
-       }
+    //    if(error_message){
+    //      return res.status(error_message.statusCode).send(error_message)
+    //    }
         //     const paymentRes= await AxiosInstancePayment.post('https://secure-egypt.paytabs.com/payment/request',{
         //         "profile_id":process.env.MERCHANT_FARZA_ID,
         //         "tran_type": "sale",
