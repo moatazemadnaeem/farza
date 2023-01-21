@@ -90,6 +90,7 @@ module.exports={
         id:existingUser._id,
         role:existingUser.role,
         IsAdmin:existingUser.role===roles.ADMIN?true:false,
+        images:existingUser.imgPath,
         token
     })
     },
@@ -104,12 +105,14 @@ module.exports={
         //check first is the session object exist and then check jwt
         if(req.currentUser){
           try{
-            const {name,email,IsAdmin,_id}= await user.findById(req.currentUser.id)
+            const {name,email,IsAdmin,_id,role}= await user.findById(req.currentUser.id)
             return res.send({
                 name,
                 email,
                 id:_id,
-                status:true
+                status:true,
+                IsSeller:role===roles.SELLER?true:false,
+                IsAdmin:roles.ADMIN?true:false,
             })
           }catch(err){
             throw new notfound('this user can not be found')
@@ -120,27 +123,18 @@ module.exports={
     },
     update_user:async(req,res)=>{
         if(req.currentUser){
-            const {name,email,password}=req.body
-            const {error}=ValidateReq(req.body)
-            if(error){
-                throw new BadReqErr(error.details[0].message)
-            }
+            const {name,email,password,mobile}=req.body
+          
             try{
-               console.log('working')
                const User= await user.findById(req.currentUser.id)
                User.name=name?name:User.name;
                User.email=email?email:User.email;
+               User.mobile=mobile?mobile:User.mobile;
                User.password=password?hashPass(password):User.password;
+             
                await User.save()
                
-               const token= jwt.sign({
-                id:User._id,
-                },process.env.JWT_KEY)
-    
-                req.session={
-                    jwt:token
-                }
-                return res.status(201).send({UserUpdated:{name:User.name,email:User.email,status:true,token}})
+               return res.status(200).send({name:User.name,email:User.email,mobile:User.mobile,status:true})
             }catch(err){
                throw new notfound('this user can not be found')
             }
@@ -182,6 +176,38 @@ module.exports={
             else{
                 throw new notfound('can not find the user')
             }
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    editProfileImg:async(req,res)=>{
+        const id=req.currentUser.id;
+        if(!id){
+            throw new BadReqErr('there is no user id')
+        }
+        try{
+            const User= await user.findById(id)
+            if(!User){
+                throw new notfound('not found the User')
+            }
+            let img=[];
+            if(req.files){
+                if(req.files.img.length===undefined){
+                    img=[req.files.img];
+                }else{
+                    img=[...req.files.img];
+                }
+            }
+            for(let i=0;i<img.length;i++){
+                let item=img[i]
+                const fileFormat = item.mimetype.split('/')[1]
+                const { base64 } = bufferToDataURI(fileFormat, item.data)
+                const imageDetails = await uploadToCloudinary(base64, fileFormat)
+                console.log(imageDetails)
+                User.imgPath.push(imageDetails.url)
+                await User.save()
+             }
+             return res.status(200).send({status:true,images:User.imgPath,lastImg:User.imgPath[User.imgPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
