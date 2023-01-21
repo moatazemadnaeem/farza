@@ -1,9 +1,9 @@
 const express=require('express')
-const {Auth}=require('../../middlewares/auth')
+const {Auth,IsUser}=require('../../middlewares/auth')
 const router=express.Router()
 const {deleteCartItems} =require('../../controllers/cart')
 
 
-router.delete('/delete-cart-items',Auth,deleteCartItems)
+router.delete('/delete-cart-items',Auth,IsUser,deleteCartItems)
 
 module.exports={delete_cart_items_route:router}

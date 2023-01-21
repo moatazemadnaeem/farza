@@ -1,5 +1,5 @@
 const express=require('express')
-const {Auth}=require('../../middlewares/auth')
+const {Auth,IsSeller}=require('../../middlewares/auth')
 const router=express.Router()
 const {add_seller_product} =require('../../controllers/products')
 
@@ -8,6 +8,6 @@ const {add_seller_product} =require('../../controllers/products')
 //each seller have a list of products
 //to create a products inside a seller we will provide another route that will handel put request 
 //To create a seller you must provide name image but not required a list of products
-router.post('/add-seller-product',Auth,add_seller_product)
+router.post('/add-seller-product',Auth,IsSeller,add_seller_product)
 
 module.exports={add_seller_product_route:router}

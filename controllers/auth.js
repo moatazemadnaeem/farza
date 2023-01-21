@@ -11,6 +11,7 @@ const {SendEmail} =require('../utils/sendEmail')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
 const {uploadToCloudinary}=require('../utils/uploadImg')
 const {roles}=require('../types/roles')
+const {checkRole}=require('../utils/checkRole')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -18,8 +19,9 @@ module.exports={
         if(!error.isEmpty()){
             throw new validateincomingreq(error.array())
         }
-        const {name,email,password,mobile}=req.body;
-        console.log(email)
+        const {name,email,password,mobile,role}=req.body;
+        console.log(email,role)
+        
        const exists=await user.findOne({email})
        if(exists){
         console.log('user already exists')
@@ -36,7 +38,13 @@ module.exports={
             }
         
         //   const uniqueString=GetRandString()
-          const User= await user.create({name,email,password:hashPass(password),mobile})
+         
+        const CheckRole=checkRole(role)
+        if(!CheckRole){
+        throw new BadReqErr('Invalid Inputs')
+        }
+          const User= await user.create({name,email,password:hashPass(password),mobile,role})
+        
           for(let i=0;i<img.length;i++){
             let item=img[i]
             const fileFormat = item.mimetype.split('/')[1]
@@ -47,7 +55,7 @@ module.exports={
             await User.save()
         }
         //   SendEmail(User.email,User.uniqueString)
-          return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,id:User._id,status:true})
+          return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,role:User.role,id:User._id,status:true})
        } 
     },
     signin:async(req,res)=>{
@@ -80,6 +88,7 @@ module.exports={
         email:existingUser.email,
         status:true,
         id:existingUser._id,
+        role:existingUser.role,
         IsAdmin:existingUser.role===roles.ADMIN?true:false,
         token
     })

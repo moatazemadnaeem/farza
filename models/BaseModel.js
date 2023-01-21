@@ -20,7 +20,7 @@ const BaseSchema=mongoose.Schema({
     role: { 
         type: String,
         enum:Object.values(roles),
-        default:roles.NORMALSELLER
+        default:roles.USER
     },
     IsValid:{
         type:Boolean,

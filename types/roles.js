@@ -1,6 +1,7 @@
 module.exports={roles:{
     ADMIN:'ADMIN',
-    NORMALSELLER:'NORMALSELLER',
+    SELLER:'SELLER',
+    USER:'USER',
     SUPPORT:'SUPPORT',
     BUSINESS:'BUSINESS',
     SHIPPERS:'SHIPPERS',
