@@ -91,7 +91,7 @@ module.exports={
                 product.imgPath.push(imageDetails.url)
                 await product.save()
              }
-             return res.status(201).send({status:true,images:product.imgPath})
+             return res.status(200).send({status:true,images:product.imgPath,lastImg:product.imgPath[product.imgPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
@@ -169,6 +169,31 @@ module.exports={
         try{
             const p=await Products.find({accepted:true})
             return res.send({status:true,products:p})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    editProduct:async(req,res)=>{
+        const {productId,title,price,desc,quantity,factory,warranty}=req.body;
+        if(!productId){
+            throw new BadReqErr('Please provide product Id')
+        }
+        try{
+            const product= await Products.findById(productId)
+            if(!product){
+                throw new notfound('not found the product')
+            }
+            product.title=title?title:product.title;
+            product.price=price?price:product.price;
+            product.desc=desc?desc:product.desc;
+            product.quantity=quantity?quantity:product.quantity;
+            product.fake_quantity=quantity?quantity:product.fake_quantity;
+            product.factory=factory?factory:product.factory;
+            product.warranty=warranty?warranty:product.warranty;
+
+            await product.save()
+
+            return res.status(200).send({status:true,product})
         }catch(err){
             throw new BadReqErr(err.message)
         }

@@ -56,8 +56,23 @@ module.exports={
             throw new BadReqErr(err.message)
         }
     },
- 
+    edit_seller:async(req,res)=>{
+        const {sellerId,name}=req.body;
+        if(!sellerId){
+            throw new BadReqErr('Please provide seller Id')
+        }
+        try{
+            const seller= await Seller.findById(sellerId)
+            if(!seller){
+                throw new notfound('not found the seller')
+            }
+            seller.name=name?name:seller.name;
+          
+            await seller.save()
+
+            return res.status(200).send({status:true,seller})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    }
 }
-//[football,swimming,tshirts] 1
-//lets see if product category holds value or equal to 1 
-//then we will send it back
