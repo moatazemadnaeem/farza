@@ -3,9 +3,11 @@ const {Seller} =require('../models/Seller')
 const {GetRandString} =require('../utils/randomString')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
 const {uploadToCloudinary}=require('../utils/uploadImg')
+const {Products}=require('../models/Products')
+const {distance}=require('../utils/getDistance')
 module.exports={
     create_seller:async(req,res)=>{
-        if(!req.body.name||req.body.name.length===0){
+        if(!req.body.name||req.body.name.length===0||!req.body.lat||!req.body.lon){
             throw new BadReqErr('Inputs are not valid please check it again')
         }
         try{
@@ -17,10 +19,14 @@ module.exports={
                     img=[...req.files.img];
                 }
             }
-            
+          
+
             const seller= await Seller.create({
                 userId:req.currentUser.id,
                 name:req.body.name,
+                lat:req.body.lat,
+                lon:req.body.lon,
+               
             })
            
             for(let i=0;i<img.length;i++){
@@ -57,7 +63,7 @@ module.exports={
         }
     },
     edit_seller:async(req,res)=>{
-        const {sellerId,name}=req.body;
+        const {sellerId,name,lat,lon}=req.body;
         if(!sellerId){
             throw new BadReqErr('Please provide seller Id')
         }
@@ -66,12 +72,52 @@ module.exports={
             if(!seller){
                 throw new notfound('not found the seller')
             }
+            
             seller.name=name?name:seller.name;
-          
+            seller.lat=lat?lat:seller.lat;
+            seller.lon=lon?lon:seller.lon;
+           
             await seller.save()
 
             return res.status(200).send({status:true,seller})
         }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    getNearestSellersProducts:async(req,res)=>{
+        const {lat,lon} =req.body;
+        if(!lat||!lon){
+            throw new BadReqErr('Please provide the right creds.')
+        }
+        try{
+                const NearestSellersProducts=await Seller.find({})
+                const distanceFromCurrLocation=NearestSellersProducts.map((item)=>{
+                    if(item.lat&&item.lon){
+                        const dist= distance(lat,lon,item.lat,item.lon)
+                        return {dist,name:item.name,id:item._id}
+                    }
+                    else{
+                        return null;
+                    }
+                })
+                const filterNull=distanceFromCurrLocation.filter((item)=>item!==null)
+                const nearest=filterNull.sort((a,b)=>a.dist-b.dist)
+               
+                if(!nearest||nearest.length===0){
+                    throw new BadReqErr('There are no nearest products')
+                }
+                let products=[]
+                for(let i=0;i<nearest.length;i++){
+                    const {id,name}=nearest[i];
+                    const p=await Products.find({sellerId:id,accepted:true})
+                    if(p.length!==0){
+                        const sp={sellerName:name,products:p}
+                        products.push(sp)
+                    }
+                }
+                return res.status(200).send({msg:'Fetched Nearest Products Successfully',products,status:true})
+            }
+        catch(err){
             throw new BadReqErr(err.message)
         }
     }
