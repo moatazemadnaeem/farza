@@ -57,8 +57,10 @@ module.exports={
     },
     getCartItems:async(req,res)=>{
         try{
-            const fetchCurrentUserCart=await Carts.find({userId:req.currentUser.id})
-           
+            const fetchCurrentUserCart=await Carts.findOne({userId:req.currentUser.id})
+            if(!fetchCurrentUserCart){
+                throw new BadReqErr('cart is not created or not found')
+            }
             return res.status(200).send({status:true,Products:fetchCurrentUserCart[0].products})
         }catch(err){
             throw new BadReqErr(err.message)
