@@ -10,7 +10,7 @@ module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
         //console.log(data,req.files)
-        if(!sellerId||!data||!data.title||!data.price||!data.desc||!data.quantity||!data.factory||!data.warranty){
+        if(!sellerId||!data||!data.title||!data.price||!data.prevPrice||!data.desc||!data.quantity||!data.factory||!data.warranty){
             throw new BadReqErr('Inputs are not valid please check it again')
         }
 
@@ -32,8 +32,9 @@ module.exports={
            if(data.categories&&!(typeof(data.categories)==="object")){
                data.categories=JSON.parse(data.categories)
            }
-           if(!(typeof(data.price)==="number")){
-               data.price=Number(data.price);       
+           if(!(typeof(data.price)==="number")||!(typeof(data.prevPrice)==="number")){
+               data.price=Number(data.price); 
+               data.prevPrice=Number(data.prevPrice)
            }
            //product id
            data._id=customId;
@@ -150,6 +151,21 @@ module.exports={
             throw new BadReqErr(err.message)
         }
     },
+    make_product_not_accepted:async(req,res)=>{
+        const {productId}=req.body;
+        if(!productId){
+            throw new BadReqErr('Inputs are not valid please check it again')
+        }
+        try{
+            const p=await Products.findOneAndDelete({_id:productId})
+            if(!p){
+                throw new BadReqErr('can not find this product')
+            }
+            return res.send({status:true,product:p,msg:"product is now not accepted"})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
     list_not_accepted_products:async(req,res)=>{
         try{
             const data=await Products.find({accepted:false})
@@ -174,7 +190,7 @@ module.exports={
         }
     },
     editProduct:async(req,res)=>{
-        const {productId,title,price,desc,quantity,factory,warranty}=req.body;
+        const {productId,title,price,desc,quantity,factory,warranty,prevPrice}=req.body;
         if(!productId){
             throw new BadReqErr('Please provide product Id')
         }
@@ -185,6 +201,7 @@ module.exports={
             }
             product.title=title?title:product.title;
             product.price=price?price:product.price;
+            product.prevPrice=prevPrice?prevPrice:product.prevPrice;
             product.desc=desc?desc:product.desc;
             product.quantity=quantity?quantity:product.quantity;
             product.fake_quantity=quantity?quantity:product.fake_quantity;

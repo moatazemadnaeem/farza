@@ -65,13 +65,13 @@ module.exports={
 
     const existingUser=await user.findOne({email})
     if(!existingUser){
-        throw new BadReqErr('invalid creds ')
+        throw new BadReqErr('invalid creds can not find user ')
     }
 
     //check password
     const validate=comparePass(password,existingUser.password)
     if(!validate){
-        throw new BadReqErr('invalid creds ')
+        throw new BadReqErr('invalid creds  error in password')
     }
 
     //send jwt 
@@ -105,10 +105,11 @@ module.exports={
         //check first is the session object exist and then check jwt
         if(req.currentUser){
           try{
-            const {name,email,IsAdmin,_id,role,imgPath}= await user.findById(req.currentUser.id)
+            const {name,email,IsAdmin,_id,role,imgPath,mobile}= await user.findById(req.currentUser.id)
             return res.send({
                 name,
                 email,
+                mobile:mobile?mobile:"there is no mobile for this user",
                 id:_id,
                 status:true,
                 IsSeller:role===roles.SELLER?true:false,
