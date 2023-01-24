@@ -56,7 +56,7 @@ module.exports={
             if(!fetchCurrentUserCart){
                 throw new BadReqErr('cart is not created or not found')
             }
-            return res.status(200).send({status:true,Products:fetchCurrentUserCart[0].products})
+            return res.status(200).send({status:true,Products:fetchCurrentUserCart.products})
         }catch(err){
             throw new BadReqErr(err.message)
         }
