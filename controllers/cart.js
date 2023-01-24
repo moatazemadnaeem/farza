@@ -30,8 +30,8 @@ module.exports={
 
             for(let i=0;i<data.products.length;i++){
                 const item=data.products[i];
-                const pId=item.productId;
-                const q=item.quantity;
+                const pId=item.productId;//id of input product
+                const q=item.quantity;//quantity of input
                 let foundItem =false;
                 fetchCurrentUserCart[0].products.forEach((element)=>{
                     if(element.productId===pId){
@@ -102,5 +102,34 @@ module.exports={
         }catch(err){
             throw new BadReqErr(err.message)
         }
-    }
+    },
+    doQuantity:async(req,res)=>{
+        try{
+
+            const {ItemId,count}=req.body
+            if(!ItemId||typeof(ItemId)!=='string'||ItemId.length===0||!count||typeof(count)!=='number'||count===0){
+                throw new BadReqErr('please check your inputs')
+            }
+            const found=await Carts.findOne({userId:req.currentUser.id})
+            if(found){
+                let p=[]
+                for(let i=0;i<found.products.length;i++){
+                    const item=found.products[i];
+                    if(item._id.toString()===ItemId){
+                        p.push({...item,quantity:count});
+                    }else{
+                        p.push(item);
+                    }
+                }
+                found.products=p;
+                await found.save()
+            }else{
+                throw new BadReqErr('can not find the cart for this user')
+            }
+            return res.status(200).send({status:true,msg:'the quantity is set now'})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+   
 }

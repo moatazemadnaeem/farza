@@ -24,7 +24,6 @@ const CartSchema = new mongoose.Schema(
         imgPath:{
           type: String,
         },
-        //make sure if an product is reserved or not
         reserved:{
           type: Boolean,
         }
