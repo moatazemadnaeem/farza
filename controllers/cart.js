@@ -57,7 +57,16 @@ module.exports={
             if(!fetchCurrentUserCart){
                 throw new BadReqErr('cart is not created or not found')
             }
-            return res.status(200).send({status:true,Products:fetchCurrentUserCart.products})
+            let p=[]
+            for(let i=0;i<fetchCurrentUserCart.products.length;i++){
+                const item=fetchCurrentUserCart.products[i]
+                console.log(item)
+                let productId= item.productId;
+                const element= await Products.findById(productId);
+                p.push(element)
+            }
+           
+            return res.status(200).send({status:true,products:p})
         }catch(err){
             throw new BadReqErr(err.message)
         }
