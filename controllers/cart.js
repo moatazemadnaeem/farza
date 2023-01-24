@@ -30,6 +30,7 @@ module.exports={
 
             for(let i=0;i<data.products.length;i++){
                 const item=data.products[i];
+                const pId=item.productId;
                 let foundItem =false;
                 fetchCurrentUserCart.products.forEach((element)=>{
                     if(element.productId===pId){
