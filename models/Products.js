@@ -21,7 +21,6 @@ const ProductSchema=mongoose.Schema({
     },
     prevPrice:{
         type: Number, 
-        required: true 
     },
     //branch x or y
     sellerId:{
