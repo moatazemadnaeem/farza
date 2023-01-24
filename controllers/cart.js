@@ -17,7 +17,7 @@ module.exports={
                 throw new BadReqErr('provide valid product')
             }
             
-            const count=await Carts.find({}).count()
+            const count=await Carts.find({userId:data.userId}).count()
             if(count===0){
                await Carts.create({
                     userId:data.userId,
@@ -25,31 +25,26 @@ module.exports={
                 }) 
             }
 
-            const fetchCurrentUserCart=await Carts.find({userId:data.userId})
+            const fetchCurrentUserCart=await Carts.findOne({userId:data.userId})
             console.log(fetchCurrentUserCart)
 
             for(let i=0;i<data.products.length;i++){
                 const item=data.products[i];
-                const pId=item.productId;//id of input product
-                const q=item.quantity;//quantity of input
                 let foundItem =false;
-                fetchCurrentUserCart[0].products.forEach((element)=>{
+                fetchCurrentUserCart.products.forEach((element)=>{
                     if(element.productId===pId){
-                        element.quantity+=q;
                         foundItem=true
                     }
-                   
                 })
                 if(foundItem){
-
-                    await fetchCurrentUserCart[0].save()
+                    throw new BadReqErr('you can not add item already added in the cart')
                 }else{
-                    fetchCurrentUserCart[0].products.push(item)
-                    await fetchCurrentUserCart[0].save()
+                    fetchCurrentUserCart.products.push(item)
+                    await fetchCurrentUserCart.save()
                 }
             }
     
-           return res.status(201).send({status:true,currentCart:fetchCurrentUserCart[0].products})
+           return res.status(201).send({status:true,msg:'product added to cart'})
         }catch(err){
             throw new BadReqErr(err.message)
         }
