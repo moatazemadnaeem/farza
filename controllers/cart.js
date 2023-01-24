@@ -10,11 +10,11 @@ module.exports={
 
             const data=req.body;//products
             if(data.userId!==req.currentUser.id){
-                throw new NotAuth()
+                throw new NotAuth('not auth')
             }
            
             if(!data.products||data.products.length===0){
-                throw new BadReqErr()
+                throw new BadReqErr('provide valid product')
             }
             
             const count=await Carts.find({}).count()
