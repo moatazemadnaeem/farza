@@ -116,7 +116,7 @@ app.use('/api/cart',clear_cart_items_route)
 app.use('/api/cart',set_quantity_route)
 //payments
 app.use('/api/payments',create_payment_route)
-// app.use('/api/payments',get_payment_route)
+app.use('/api/payments',get_payment_route)
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
 })
