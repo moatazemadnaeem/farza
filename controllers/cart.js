@@ -3,6 +3,7 @@ const {notfound}=require('../errorclasses/notfound')
 const {NotAuth}=require('../errorclasses/notauth')
 const {Carts}=require('../models/Cart')
 const {Products}=require('../models/Products')
+const {Seller}=require('../models/Seller')
 module.exports={
 
     addCartItems:async(req,res)=>{
@@ -63,7 +64,9 @@ module.exports={
                 console.log(item)
                 let productId= item.productId;
                 const element= await Products.findById(productId);
-                p.push(element)
+                let SellerId=element.sellerId;
+                const seller= await Seller.findById(SellerId)
+                p.push({sellerName:seller?seller.name:'No seller',...element.toObject({ virtuals: false })}) 
             }
            
             return res.status(200).send({status:true,products:p})
