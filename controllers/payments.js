@@ -55,14 +55,15 @@ module.exports={
             if(q1===q2){
                 //the sub is should happen when we success purshase
                 product_found.set({fake_quantity:q2-q1})
-                product_found.set({quantity:q2-q1})
-                product_found.set({reserved:true})
+                // product_found.set({quantity:q2-q1})
+                // product_found.set({reserved:true})
                 await product_found.save()
             }
+            //q1=5 in the store q2=20 result = 15
             if(q2>q1){
                 product_found.set({fake_quantity:q2-q1})
-                product_found.set({quantity:q2-q1})
-                product_found.set({reserved:false})
+                // product_found.set({quantity:q2-q1})
+                // product_found.set({reserved:false})
                 await product_found.save()
             }
        }
@@ -80,10 +81,12 @@ module.exports={
             "cart_amount": total_amount,
             "callback": "https://mushy-cow-lapel.cyclic.app/api/payments/get-payment"
         })
-       
-        order.set({status:order_status.AwaitingDelivering})
-        await order.save()
-        return res.send({status:true,order})
+        if(paymentRes?.data){
+          res.send(paymentRes.data)
+        }else{
+            throw new BadReqErr('something went wrong while preparing the payment link')
+        }
+      
        }
        catch(err){  
         throw new BadReqErr(err.message)
@@ -100,7 +103,7 @@ module.exports={
         //Run inside if the transaction done perfectly
         const order= await Orders.findOne({_id:cart_id})
         const {userId,mobile}=order;
-        order.set({status:order_status.Success})
+        order.set({status:order_status.AwaitingDelivering})
         await order.save()
         const products=order.products;
         for(let i=0;i<products.length;i++){
@@ -109,10 +112,14 @@ module.exports={
          const __product= await Products.findById(item.productId)
          
          __product.set({quantity:__product.fake_quantity})
-         __product.set({reserved:false})
+         if(__product.fake_quantity===0){
+          __product.set({reserved:true})
+         }else{
+          __product.set({reserved:false})
+         }
           await __product.save()
         }
-        await Payment.create({userId,mobile,tran_ref,orderId:cart_id,tran_total,customer_details,shipping_details,payment_result,msg:'You paid successfully for this order please wait for the shiping.'})
+        await Payment.create({userId,mobile,tran_ref,orderId:cart_id,order,tran_total,customer_details,shipping_details,payment_result,msg:'You paid successfully for this order please wait for the shiping.'})
        }
        if(payment_result?.response_status==='C'){
         //which means its cancelled 
@@ -131,13 +138,12 @@ module.exports={
              __product.set({reserved:false})
               await __product.save()
             }
-            await Payment.create({userId,mobile,tran_ref,orderId:cart_id,tran_total,payment_result,msg:'This order is cancelled.'})
+            await Payment.create({userId,mobile,order,tran_ref,orderId:cart_id,tran_total,payment_result,msg:'This order is cancelled.'})
         }catch(err){
             console.log(err.message)
         }
      
        }
-       return res.status(201).send('everything went okay')
-       
+      return res.status(201).send('everything went okay')
     }
 }
