@@ -48,7 +48,54 @@ module.exports={
                 throw new notfound('can not find this order')
             }
             order.set({status:order_status.Delivered})
+            await order.save()
             return res.send({status:true,order})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    cancell_by_user:async(req,res)=>{
+        const {orderId}=req.body;
+        if(!orderId){
+            throw new BadReqErr('please provide order id')
+        }
+        try{
+            const order=await Orders.findById(orderId)
+            if(!order){
+                throw new notfound('can not find this order')
+            }
+            order.set({status:order_status.CancelledByUser})
+            await order.save()
+            return res.send({status:true,order})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    cancell_by_admin:async(req,res)=>{
+        const {orderId}=req.body;
+        if(!orderId){
+            throw new BadReqErr('please provide order id')
+        }
+        try{
+            const order=await Orders.findById(orderId)
+            if(!order){
+                throw new notfound('can not find this order')
+            }
+            order.set({status:order_status.REJECTED})
+            await order.save()
+            return res.send({status:true,order})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
+    get_all_orders_by_user:async(req,res)=>{
+        try{
+            const orders=await Orders.find({userId:req.currentUser.id})
+            if(!orders){
+                throw new notfound('can not find orders for this user')
+            }
+          
+            return res.send({status:true,orders})
         }catch(err){
             throw new BadReqErr(err.message)
         }

@@ -5,6 +5,8 @@ module.exports={order_status:{
     Success:'success',
     Shiped:'shiped',
     Delivered:'delivered',
-    Cancelled:'cancelled'
+    Cancelled:'cancelled',
+    REJECTED:"REJECTED",
+    CancelledByUser:"CancelledByUser"
 
 }} 
