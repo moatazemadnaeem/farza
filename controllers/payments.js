@@ -97,8 +97,8 @@ module.exports={
        const data=req.body;
        console.log('data ==>',data)
 
-       const {tran_ref,cart_id,tran_total,customer_details,shipping_details,payment_result}=data;
-
+       const {tran_ref,cart_id,tran_total,customer_details,shipping_details,payment_result,respStatus}=data;
+       console.log('response Status',respStatus)
        if(payment_result?.response_status==='A'){
         //Run inside if the transaction done perfectly
         const order= await Orders.findOne({_id:cart_id})
