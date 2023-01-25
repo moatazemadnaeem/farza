@@ -5,7 +5,7 @@ const mongoose =require('mongoose')
 const {Orders}=require('../models/Order')
 const {Products} =require('../models/Products')
 const {order_status}=require('../types/status')
-
+const {Seller}=require('../models/Seller')
 
 module.exports={
     create_order:async(req,res)=>{
@@ -32,7 +32,22 @@ module.exports={
     get_awaiting_delivering_orders:async(req,res)=>{
         try{
             const orders=await Orders.find({status:'awaiting-delivering'})
-            return res.send({status:true,orders})
+            const o=[]
+            for(let i=0;i<orders.length;i++){
+                const item=orders[i]
+                let products=item.products;
+                let tempProducts=[]
+                for(let i=0;i<products.length;i++){
+                    let pItem=products[i]
+                    let q=pItem.quantity;
+                    let pId=pItem.productId;
+                    let P= await Products.findById(pId)
+                    tempProducts.push({quantity:q,...P.toObject({ virtuals: false })})
+                }
+                o.push({...item.toObject({ virtuals: false }),products:tempProducts})
+            }
+           
+            return res.send({status:true,orders:o})
         }catch(err){
             throw new BadReqErr(err.message)
         }
