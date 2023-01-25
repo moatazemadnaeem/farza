@@ -99,7 +99,7 @@ module.exports={
 
        const {tran_ref,cart_id,tran_total,customer_details,shipping_details,payment_result,respStatus}=data;
        console.log('response Status',respStatus)
-       if(+(payment_result?.response_code)>=200||+(payment_result?.response_code)<=299){
+       if(payment_result?.response_status==='A'){
         //Run inside if the transaction done perfectly
         const order= await Orders.findOne({_id:cart_id})
         const {userId,mobile}=order;
