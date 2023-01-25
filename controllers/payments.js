@@ -99,7 +99,7 @@ module.exports={
 
        const {tran_ref,cart_id,tran_total,customer_details,shipping_details,payment_result,respStatus}=data;
        console.log('response Status',respStatus)
-       if(payment_result?.response_status==='A'){
+       if(+(payment_result?.response_code)>=200||+(payment_result?.response_code)<=299){
         //Run inside if the transaction done perfectly
         const order= await Orders.findOne({_id:cart_id})
         const {userId,mobile}=order;
@@ -121,7 +121,7 @@ module.exports={
         }
         await Payment.create({userId,mobile,tran_ref,orderId:cart_id,order,tran_total,customer_details,shipping_details,payment_result,msg:'You paid successfully for this order please wait for the shiping.'})
        }
-       if(payment_result?.response_status==='C'){
+       else{
         //which means its cancelled 
         try{
             const order= await Orders.findOne({_id:cart_id})
