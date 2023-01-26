@@ -59,6 +59,7 @@ module.exports={
                 throw new BadReqErr('cart is not created or not found')
             }
             let p=[]
+            console.log(fetchCurrentUserCart)
             for(let i=0;i<fetchCurrentUserCart.products.length;i++){
                 const item=fetchCurrentUserCart.products[i]
                 console.log(item)
@@ -84,11 +85,12 @@ module.exports={
             const found=await Carts.findOne({userId:req.currentUser.id})
             if(found){
                const newProducts=found.products.filter((item)=>{
-                if(item._id.toString()!==ItemId){
+                if(item.productId.toString()!==ItemId){
                     return item
                 }
                 })
-                
+
+                console.log(newProducts)
                 found.products=newProducts;
                 await found.save()
             }else{
