@@ -37,12 +37,14 @@ module.exports={
                 const item=orders[i]
                 let products=item.products;
                 let tempProducts=[]
-                for(let i=0;i<products.length;i++){
-                    let pItem=products[i]
-                    let q=pItem.quantity;
-                    let pId=pItem.productId;
-                    let P= await Products.findById(pId)
-                    tempProducts.push({quantity:q,...P.toObject({ virtuals: false })})
+                for(let j=0;j<products.length;j++){
+                    const {productId,sellerId,quantity}=products[j];
+                    const PItem=await Products.findById(productId)
+                    console.log('p its self',PItem)
+                    const seller=await Seller.findById(sellerId)
+                    if(PItem){
+                        tempProducts.push({sellerName:(seller&&seller.name)?seller.name:'there is no seller name',quantity,...PItem.toObject({ virtuals: false })})
+                    }
                 }
                 o.push({...item.toObject({ virtuals: false }),products:tempProducts})
             }
@@ -109,8 +111,24 @@ module.exports={
             if(!orders){
                 throw new notfound('can not find orders for this user')
             }
-          
-            return res.send({status:true,orders})
+            let o=[]
+            for(let i=0;i<orders.length;i++){
+                const item=orders[i]
+                const p=item.products;
+                console.log(p)
+                let tempProducts=[]
+                for(let j=0;j<p.length;j++){
+                    const {productId,sellerId,quantity}=p[j];
+                    const PItem=await Products.findById(productId)
+                    console.log('p its self',PItem)
+                    const seller=await Seller.findById(sellerId)
+                    if(PItem){
+                        tempProducts.push({sellerName:(seller&&seller.name)?seller.name:'there is no seller name',quantity,...PItem.toObject({ virtuals: false })})
+                    }
+                }
+                o.push({...item.toObject({ virtuals: false }),products:tempProducts})
+            }
+            return res.send({status:true,orders:o})
         }catch(err){
             throw new BadReqErr(err.message)
         }
