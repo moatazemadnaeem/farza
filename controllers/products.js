@@ -5,7 +5,8 @@ const {Products}=require('../models/Products')
 const {Seller} =require('../models/Seller')
 const {GetRandString}=require('../utils/randomString')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
-const {uploadToCloudinary}=require('../utils/uploadImg')
+const {uploadToCloudinary,uploadVideosToCloudinary}=require('../utils/uploadImg')
+const {readFileSync,unlinkSync}=require('fs')
 module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
@@ -214,5 +215,43 @@ module.exports={
         }catch(err){
             throw new BadReqErr(err.message)
         }
+    },
+    add_video_product:async(req,res)=>{
+        // const {productId}=req.body;
+        // if(!productId){
+        //     throw new BadReqErr('Please provide product Id')
+        // }
+        // try{
+        //     const product= await Products.findById(productId)
+        //     if(!product){
+        //         throw new notfound('not found the product')
+        //     }
+        //     let video=[];
+        //     if(req.files){
+        //         if(req.files.video.length===undefined){
+        //             video=[req.files.video];
+        //         }else{
+        //             video=[...req.files.video];
+        //         }
+        //     }
+        //     console.log(product,video)
+        //     for(let i=0;i<video.length;i++){
+        //         let item=video[i]   
+        //         //const fileFormat = item.mimetype.split('/')[1]
+        //        // const { base64 } = bufferToDataURI(fileFormat, item.data)
+        //         const base64=item.data.toString('base64')
+        //         resVideo=await uploadVideosToCloudinary(base64)
+        //         if(resVideo){
+        //             product.videoPath.push(resVideo.url)
+        //             await product.save()
+        //         }
+              
+        //      }
+            
+        //     return res.status(200).send({status:true,videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
+        // }catch(err){
+        //     throw new BadReqErr(err.message)
+        // }
+        res.send('soon')
     }
 }

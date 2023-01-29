@@ -26,8 +26,23 @@ const uploadToCloudinary = async (fileString, format) => {
     throw new BadReqErr(error.msg);
   }
 };
+const uploadVideosToCloudinary = async (base64) => {
+  try {
+    const { uploader } = cloudinary;
+
+    const res = await uploader.upload_large(
+      base64
+      ,
+      { resource_type: 'video' }
+    )
+    console.log(res)
+    return res;
+  } catch (error) {
+    throw new BadReqErr(error.message);
+  }
+};
 
 module.exports = {
-  upload,
   uploadToCloudinary,
+  uploadVideosToCloudinary
 };

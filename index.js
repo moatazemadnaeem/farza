@@ -31,6 +31,7 @@ const {acceptProduct} = require('./routes/ProductRoutes/accept_product_route')
 const {list_not_accepted_products_route} = require('./routes/ProductRoutes/list_not_accepted')
 const {list_accepted_products_route} = require('./routes/ProductRoutes/list_accepted')
 const {edit_product} = require('./routes/ProductRoutes/editProduct')
+const {add_video_product_route} = require('./routes/ProductRoutes/add_video_product')
 const {disallowProduct} = require('./routes/ProductRoutes/disallow_product')
 // Orders
 const {create_order_route}=require('./routes/OrderRoutes/create-order')
@@ -48,6 +49,7 @@ const {set_quantity_route}=require('./routes/cartRoutes/doQuantityRoute')
 //Payments
 const {create_payment_route}=require('./routes/PaymentRoutes/create-payment')
 const {get_payment_route}=require('./routes/PaymentRoutes/get_payment')
+const {show_payment_route}=require('./routes/PaymentRoutes/ShowPaymentForAdmin')
 
 const { handelerr } =require('./middlewares/handelError') 
 const {notfound}=require('./errorclasses/notfound')
@@ -59,7 +61,8 @@ const app=express()
 const port=process.env.PORT||9000
 app.use(fileUpload({
     limits: { fileSize: 2 * 1024 * 1024 },
-    createParentPath: true
+    createParentPath: true,
+
 }));
 app.use('/static', express.static(path.join(__dirname, 'images')))
 //app.set('trust proxy',true)
@@ -101,6 +104,7 @@ app.use('/api/products',list_not_accepted_products_route)
 app.use('/api/products',list_accepted_products_route)
 app.use('/api/products',edit_product)
 app.use('/api/products',disallowProduct)
+app.use('/api/products',add_video_product_route)
 //Orders
 app.use('/api/orders',create_order_route)
 app.use('/api/orders',awaiting_delivering_route)
@@ -117,6 +121,7 @@ app.use('/api/cart',set_quantity_route)
 //payments
 app.use('/api/payments',create_payment_route)
 app.use('/api/payments',get_payment_route)
+app.use('/api/payments',show_payment_route)
 app.all('*',()=>{
     throw new notfound('can not find this page please try again')
 })

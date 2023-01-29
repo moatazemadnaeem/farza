@@ -118,7 +118,7 @@ module.exports={
          }
           await __product.save()
         }
-        await Payment.create({userId,mobile,tran_ref,orderId:cart_id,order,tran_total,customer_details,shipping_details,payment_result,msg:'You paid successfully for this order please wait for the shiping.'})
+        await Payment.create({status:'success',userId,mobile,tran_ref,orderId:cart_id,order,tran_total,customer_details,shipping_details,payment_result,msg:'You paid successfully for this order please wait for the shiping.'})
        }
        else{
         //which means its cancelled 
@@ -137,12 +137,33 @@ module.exports={
              __product.set({reserved:false})
               await __product.save()
             }
-            await Payment.create({userId,mobile,order,tran_ref,orderId:cart_id,tran_total,payment_result,msg:'This order is cancelled.'})
+            await Payment.create({status:'failed',userId,mobile,order,tran_ref,orderId:cart_id,tran_total,payment_result,msg:'This order is cancelled.'})
         }catch(err){
             console.log(err.message)
         }
      
        }
       return res.status(201).send('everything went okay')
+    },
+    showPaymentForAdmin:async(req,res)=>{
+       try{
+            const payments=await Payment.find({'payment_result.response_status':'A'})
+
+            if(!payments){
+                throw new BadReqErr('can not find payments')
+            }
+            let shapedPayments=[]
+            for(let i=0;i<payments.length;i++){
+                const item=payments[i];
+                const orderId=item.orderId;
+                const order=await Orders.findById(orderId)
+                if(order.status===order_status.AwaitingDelivering){
+                    shapedPayments.push(item)
+                }
+            }
+            return res.status(200).send({status:true,payments:shapedPayments})
+       }catch(err){
+        throw new BadReqErr(err.message)
+       }
     }
 }

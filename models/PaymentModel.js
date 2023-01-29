@@ -38,6 +38,10 @@ const PaymentSchema = new mongoose.Schema(
     msg:{
         type:String,
         required:true
+    },
+    status:{
+        type:String,
+        required:true
     }
   },
   { timestamps: true }
