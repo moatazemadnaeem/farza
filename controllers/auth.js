@@ -12,6 +12,7 @@ const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
 const {uploadToCloudinary}=require('../utils/uploadImg')
 const {roles}=require('../types/roles')
 const {checkRole}=require('../utils/checkRole')
+const {Carts} =require('../models/Cart')
 module.exports={
     signup:async(req,res)=>{
         const error =validationResult(req)
@@ -53,6 +54,13 @@ module.exports={
             console.log(imageDetails)
             User.imgPath.push(imageDetails.url)
             await User.save()
+        }
+        const count=await Carts.find({userId:User._id}).count()
+        if(count===0){
+           await Carts.create({
+                userId:User._id,
+                products:[]
+            }) 
         }
         //   SendEmail(User.email,User.uniqueString)
           return res.status(201).send({name:User.name,email:User.email,mobile,img:User.imgPath,role:User.role,id:User._id,status:true})

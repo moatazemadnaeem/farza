@@ -56,7 +56,7 @@ module.exports={
         try{
             const fetchCurrentUserCart=await Carts.findOne({userId:req.currentUser.id})
             if(!fetchCurrentUserCart){
-                throw new BadReqErr('cart is not created or not found')
+                throw new BadReqErr('cart is not found')
             }
             let p=[]
             console.log(fetchCurrentUserCart)
