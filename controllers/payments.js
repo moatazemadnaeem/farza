@@ -165,5 +165,157 @@ module.exports={
        }catch(err){
         throw new BadReqErr(err.message)
        }
+    },
+    PayInCash:async(req,res)=>{
+        const {orderId}=req.body;
+       if(!orderId){
+        throw new BadReqErr('Inputs are not valid please check it again')
+       }
+       try{
+        const order= await Orders.findOne({_id:orderId})
+         if(order.status!==order_status.AwaitingPayment){
+         throw new BadReqErr('this order is cancelled please order it again')
+         }
+        const {total_amount,products,address,mobile,userId}=order
+        let error_message=false
+        for(let i=0;i< products.length;i++){
+             const item=products[i]
+             //the quantity that a person trying to purchase
+             const q1= item.quantity
+             let product_found=false;
+             try{
+                 product_found=await Products.findById(item.productId)
+             }catch(err){
+                 error_message={statusCode:400,status:false,msg:err.message}
+                 break;
+             }
+ 
+             if(!product_found){
+                 error_message={statusCode:404,status:false,msg:'this product is not found',item}
+                 break;
+             }
+ 
+             if(product_found.reserved){
+                 error_message={statusCode:400,status:false,msg:'the product is already reserved',item}
+                 break;
+             }
+             //fake quantity = real quantity
+             const q2=product_found.fake_quantity
+         
+             if(q1>q2){
+                 error_message={statusCode:400,status:false,msg:'you are trying to purchase too many items from this product but the store does not have those many items',item}
+                 break;
+             }
+             if(q1<=0){
+                 error_message={statusCode:400,status:false,msg:'You ordered zero product please try to add a product',item}
+                 break;
+             }
+             if(q1===q2){
+                 //the sub is should happen when we success purshase
+                 product_found.set({fake_quantity:q2-q1})
+                 // product_found.set({quantity:q2-q1})
+                 // product_found.set({reserved:true})
+                 await product_found.save()
+             }
+             //q1=5 in the store q2=20 result = 15
+             if(q2>q1){
+                 product_found.set({fake_quantity:q2-q1})
+                 // product_found.set({quantity:q2-q1})
+                 // product_found.set({reserved:false})
+                 await product_found.save()
+             }
+        }
+      
+        if(error_message){
+          return res.status(error_message.statusCode).send(error_message)
+        }
+        
+        order.status=order_status.AwaitingAcceptByAdmin;
+        // const currentDate = new Date();
+        // const futureDate = new Date(currentDate.getTime() + 20 * 60 * 1000);
+        // order.set({futureDate:futureDate})
+        await order.save()
+        }
+        catch(err){  
+         throw new BadReqErr(err.message)
+        }
+    },
+    getAwaitingAccepted:async(req,res)=>{
+        try{
+            const orders=await Orders.find({status:order_status.AwaitingAcceptByAdmin})
+
+            if(!orders){
+                throw new BadReqErr('can not find orders to be accepted')
+            }
+           
+            return res.status(200).send({status:true,orders})
+       }catch(err){
+        throw new BadReqErr(err.message)
+       }
+    },
+    acceptByAdmin:async(req,res)=>{
+        const {orderId}=req.body;
+        if(!orderId){
+         throw new BadReqErr('Inputs are not valid please check it again')
+        }
+        try{
+            const order=await Orders.findById(orderId)
+
+            if(!order){
+                throw new BadReqErr('can not find order')
+            }
+
+            const {products,address}=order
+            for(let i=0;i<products.length;i++){
+                const item=products[i]
+                
+               const __product= await Products.findById(item.productId)
+               
+               __product.set({quantity:__product.fake_quantity})
+               if(__product.fake_quantity===0){
+                __product.set({reserved:true})
+               }else{
+                __product.set({reserved:false})
+               }
+                await __product.save()
+            }
+            order.status=order_status.AwaitingDelivering;
+            await order.save()
+            
+            const payment=await Payment.create({status:'success',userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'A'},msg:'You paid successfully for this order please wait for the shiping.'})
+
+            return res.status(200).send({status:true,order,payment})
+       }catch(err){
+        throw new BadReqErr(err.message)
+       }
+    },
+    rejectByAdmin:async(req,res)=>{
+        const {orderId}=req.body;
+        if(!orderId){
+         throw new BadReqErr('Inputs are not valid please check it again')
+        }
+        try{
+            const order=await Orders.findById(orderId)
+            if(!order){
+                throw new BadReqErr('can not find order')
+            }
+            const {products}=order
+            for(let i=0;i<products.length;i++){
+                const item=products[i]
+                
+               const __product= await Products.findById(item.productId)
+               
+               __product.set({fake_quantity:__product.quantity})
+               __product.set({reserved:false})
+                await __product.save()
+            }
+            order.status=order_status.REJECTED;
+            await order.save()
+            const payment=await Payment.create({status:'failed',userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'C'},msg:'You Did not paid for this order please try again.'})
+
+            return res.status(200).send({status:true,order,payment})
+       }catch(err){
+        throw new BadReqErr(err.message)
+       }
     }
 }

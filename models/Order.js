@@ -44,6 +44,9 @@ const OrderSchema = new mongoose.Schema(
         enum:Object.values(order_status),
         default: order_status.Created
     },
+    futureDate:{
+      type:Date,
+    },
   },
   { timestamps: true }
 );
