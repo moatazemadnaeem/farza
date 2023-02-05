@@ -173,8 +173,9 @@ module.exports={
        }
        try{
         const order= await Orders.findOne({_id:orderId})
+        console.log(order)
          if(order.status!==order_status.AwaitingPayment){
-         throw new BadReqErr('this order is cancelled please order it again')
+            return res.status(200).send({status:true,msg:order.status})
          }
         const {total_amount,products,address,mobile,userId}=order
         let error_message=false
@@ -235,6 +236,7 @@ module.exports={
         // const futureDate = new Date(currentDate.getTime() + 20 * 60 * 1000);
         // order.set({futureDate:futureDate})
         await order.save()
+        return res.status(200).send({status:true,order})
         }
         catch(err){  
          throw new BadReqErr(err.message)
@@ -265,7 +267,7 @@ module.exports={
                 throw new BadReqErr('can not find order')
             }
 
-            const {products,address}=order
+            const {products,address,mobile,userId}=order
             for(let i=0;i<products.length;i++){
                 const item=products[i]
                 
@@ -299,7 +301,7 @@ module.exports={
             if(!order){
                 throw new BadReqErr('can not find order')
             }
-            const {products}=order
+            const {products,address,mobile,userId}=order
             for(let i=0;i<products.length;i++){
                 const item=products[i]
                 
