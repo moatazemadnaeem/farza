@@ -67,7 +67,8 @@ const port=process.env.PORT||9000
 app.use(fileUpload({
     limits: { fileSize: 2 * 1024 * 1024 },
     createParentPath: true,
-    useTempFiles: true
+    useTempFiles: true,
+    tempFileDir: null
 
 }));
 app.use('/static', express.static(path.join(__dirname, 'images')))
