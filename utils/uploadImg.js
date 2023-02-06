@@ -1,5 +1,5 @@
 const multer = require("multer");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2;
 const {BadReqErr}=require('../errorclasses/badReq')
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,17 +26,12 @@ const uploadToCloudinary = async (fileString, format) => {
     throw new BadReqErr(error.msg);
   }
 };
-const uploadVideosToCloudinary = async (base64) => {
+const uploadVideosToCloudinary = async (data, mimetype,path) => {
   try {
-    const { uploader } = cloudinary;
-
-    const res = await uploader.upload_large(
-      base64
-      ,
-      { resource_type: 'video' }
-    )
-    console.log(res)
-    return res;
+    const result = await cloudinary.uploader.upload(path,{
+      resource_type: 'video',
+    });
+    return result;
   } catch (error) {
     throw new BadReqErr(error.message);
   }
