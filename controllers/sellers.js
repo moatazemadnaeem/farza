@@ -120,5 +120,23 @@ module.exports={
         catch(err){
             throw new BadReqErr(err.message)
         }
+    },
+    getSellerProducts:async(req,res)=>{
+        const {sellerId,userId}=req.body;
+        if(!sellerId){
+            throw new BadReqErr('Please provide seller Id')
+        }
+        if(userId!==req.currentUser.id){
+            throw new BadReqErr('You are not allowed to do this')
+        }
+        try{
+            const products= await Products.find({sellerId})
+            if(!products){
+                throw new notfound('not found the products for this seller')
+            }
+            return res.status(200).send({status:true,products})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
     }
 }

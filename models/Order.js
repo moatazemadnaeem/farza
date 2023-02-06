@@ -47,6 +47,12 @@ const OrderSchema = new mongoose.Schema(
     futureDate:{
       type:Date,
     },
+    lon:{
+      type:Number,
+    },
+    lat:{
+      type:Number,
+    },
   },
   { timestamps: true }
 );

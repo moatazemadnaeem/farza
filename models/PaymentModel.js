@@ -45,7 +45,15 @@ const PaymentSchema = new mongoose.Schema(
     status:{
         type:String,
         required:true
-    }
+    },
+    lon:{
+        type:Number,
+        required:true
+    },
+    lat:{
+        type:Number,
+        required:true
+    },
   },
   { timestamps: true }
 );

@@ -167,8 +167,8 @@ module.exports={
        }
     },
     PayInCash:async(req,res)=>{
-        const {orderId}=req.body;
-       if(!orderId){
+       const {orderId,lon,lat}=req.body;
+       if(!orderId||!lon||!lat||typeof lat!=='number'||typeof lon!=='number'){
         throw new BadReqErr('Inputs are not valid please check it again')
        }
        try{
@@ -204,7 +204,7 @@ module.exports={
              const q2=product_found.fake_quantity
          
              if(q1>q2){
-                 error_message={statusCode:400,status:false,msg:'you are trying to purchase too many items from this product but the store does not have those many items',item}
+                 error_message={statusCode:400,status:false,msg:'you are trying to purchase too many items from this product but the store does not have those many items or there is someone trying to get this item right now',item}
                  break;
              }
              if(q1<=0){
@@ -232,6 +232,8 @@ module.exports={
         }
         
         order.status=order_status.AwaitingAcceptByAdmin;
+        order.lon=lon;
+        order.lat=lat;
         // const currentDate = new Date();
         // const futureDate = new Date(currentDate.getTime() + 20 * 60 * 1000);
         // order.set({futureDate:futureDate})
@@ -267,7 +269,10 @@ module.exports={
                 throw new BadReqErr('can not find order')
             }
 
-            const {products,address,mobile,userId}=order
+            const {products,address,mobile,userId,lon,lat}=order
+            if(!lat||!lon){
+                throw new BadReqErr('there is no lat or lon')
+            }
             for(let i=0;i<products.length;i++){
                 const item=products[i]
                 
@@ -284,7 +289,7 @@ module.exports={
             order.status=order_status.AwaitingDelivering;
             await order.save()
             
-            const payment=await Payment.create({status:'success',userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'A'},msg:'You paid successfully for this order please wait for the shiping.'})
+            const payment=await Payment.create({status:'success',lat,lon,userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'A'},msg:'You paid successfully for this order please wait for the shiping.'})
 
             return res.status(200).send({status:true,order,payment})
        }catch(err){
@@ -301,7 +306,10 @@ module.exports={
             if(!order){
                 throw new BadReqErr('can not find order')
             }
-            const {products,address,mobile,userId}=order
+            const {products,address,mobile,userId,lon,lat}=order
+            if(!lat||!lon){
+                throw new BadReqErr('there is no lat or lon')
+            }
             for(let i=0;i<products.length;i++){
                 const item=products[i]
                 
@@ -313,7 +321,7 @@ module.exports={
             }
             order.status=order_status.REJECTED;
             await order.save()
-            const payment=await Payment.create({status:'failed',userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'C'},msg:'You Did not paid for this order please try again.'})
+            const payment=await Payment.create({status:'failed',lat,lon,userId,mobile,orderId:order._id,customer_details:{address},payment_result:{'response_status':'C'},msg:'You Did not paid for this order please try again.'})
 
             return res.status(200).send({status:true,order,payment})
        }catch(err){
