@@ -2,6 +2,9 @@ const {BadReqErr} =require('../errorclasses/badReq')
 const {notfound}=require('../errorclasses/notfound')
 const mongoose =require('mongoose')
 const {Products}=require('../models/Products')
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3()
+
 const {Seller} =require('../models/Seller')
 const {GetRandString}=require('../utils/randomString')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
@@ -241,12 +244,22 @@ module.exports={
                 console.log(item)
                 //const fileFormat = item.mimetype.split('/')[1]
                // const { base64 } = bufferToDataURI(fileFormat, item.data)
-                
-                let resVideo=await uploadVideosToCloudinary(item.data, item.mimetype,item.tempFilePath)
-                if(resVideo){
-                  console.log(resVideo)
-                  videos.push(resVideo)
-                }
+                const file= await s3.putObject({
+                Body: JSON.stringify({key:item}),
+                Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
+                Key: "some_files/my_file.json",
+                }).promise()
+                console.log('file',file)
+                let my_file = await s3.getObject({
+                    Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
+                    Key: "some_files/my_file.json",
+                }).promise()
+                console.log('my_file',my_file)
+                // let resVideo=await uploadVideosToCloudinary(item.data, item.mimetype,item.tempFilePath)
+                // if(resVideo){
+                //   console.log(resVideo)
+                //   videos.push(resVideo)
+                // }
               
              }
             return res.send({msg:'done',videos})

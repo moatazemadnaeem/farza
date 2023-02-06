@@ -28,8 +28,13 @@ const uploadToCloudinary = async (fileString, format) => {
 };
 const uploadVideosToCloudinary = async (data, mimetype,path) => {
   try {
-    const result = await cloudinary.uploader.upload(path,{
+    const stream = data.toString('binary');
+    const buffer = Buffer.from(stream, 'binary');
+    const result = await cloudinary.uploader.upload_stream({
       resource_type: 'video',
+      public_id: `${Date.now()}`,
+      buffer,
+      format: mimetype.split('/')[1],
     });
     return result;
   } catch (error) {
