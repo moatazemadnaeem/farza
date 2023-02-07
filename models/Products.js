@@ -12,9 +12,9 @@ const ProductSchema=mongoose.Schema({
     imgPath:{
         type: [String], 
     },
-    // videoPath:{
-    //     type: [String], 
-    // },
+    videoPath:{
+        type: [String], 
+    },
     categories: { 
         type: Array ,
     },

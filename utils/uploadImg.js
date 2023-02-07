@@ -2,6 +2,7 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const {BadReqErr}=require('../errorclasses/badReq')
 const fs=require('fs')
+const {GetRandString}=require('../utils/randomString')
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -27,10 +28,10 @@ const uploadToCloudinary = async (fileString, format) => {
     throw new BadReqErr(error.msg);
   }
 };
-const uploadVideosToCloudinary = async (buffer, mimetype) => {
+const uploadVideosToCloudinary = async (buffer,mimetype,name) => {
   try {
     
-     const tempFilePath = `/tmp/${Date.now()}.${mimetype.split('/')[1]}`;
+     const tempFilePath = `/tmp/${name}${GetRandString()}.${mimetype}`;
      fs.writeFileSync(tempFilePath, buffer);
 
      const result = await cloudinary.uploader.upload(tempFilePath, {

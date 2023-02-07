@@ -218,15 +218,16 @@ module.exports={
         }
     },
     add_video_product:async(req,res)=>{
-        // const {productId}=req.body;
-        // if(!productId){
-        //     throw new BadReqErr('Please provide product Id')
-        // }
+        const {productId}=req.body;
+        if(!productId){
+            throw new BadReqErr('Please provide product Id')
+        }
         try{
-            // const product= await Products.findById(productId)
-            // if(!product){
-            //     throw new notfound('not found the product')
-            // }
+            const product= await Products.findById(productId)
+            if(!product){
+                throw new notfound('not found the product')
+            }
+            
             let video=[];
             if(req.files){
                 if(req.files.video.length===undefined){
@@ -235,48 +236,18 @@ module.exports={
                     video=[...req.files.video];
                 }
             }
-            // console.log(product,video)
-            let videos=[]
             for(let i=0;i<video.length;i++){
                 let item=video[i]
                 console.log(item)
-                let rand=GetRandString()
                 const fileName = item.name.split('.')[0]
                 const fileFormat = item.mimetype.split('/')[1]
-                // const file= await s3.putObject({
-                // Body: JSON.stringify({key:item}),
-                // Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                // Key: `videos/${fileName}${rand}.${fileFormat}`,
-                // }).promise()
-                // // let my_file = await s3.getObject({
-                // //     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                // //     Key: `videos/${fileName}${rand}.${fileFormat}`,
-                // // }).promise()
-    
-                // // console.log('my file',JSON.parse(my_file))
-                // // const getUrl=()=>{
-                // //     return new Promise((resolve,reject)=>{
-                // //         s3.getSignedUrl('getObject',{ Bucket: "cyclic-mushy-cow-lapel-ca-central-1",Key: `videos/${fileName}${rand}.${fileFormat}`},(err, url) => {
-                // //             if (err) {
-                // //               reject(err);
-                // //             } else {
-                // //               resolve(url);
-                // //             }})
-                // //     })
-                // // }
-                // // // const URL=await getUrl()
-                // let s3File = await s3.getObject({
-                //     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                //     Key: `videos/${fileName}${rand}.${fileFormat}`,
-                //   }).promise()
-                //   console.log(JSON.parse(s3File))
-                let file=await uploadVideosToCloudinary(item.data,fileFormat,'any')
+                let file=await uploadVideosToCloudinary(item.data,fileFormat,fileName)
                 console.log(file)
                 if(file){
-                    videos.push(file.url)
+                    product.videoPath.push(file.url)
                 }
              }
-            return res.send({msg:'done',videos})
+            return res.send({msg:'done',videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
