@@ -6,6 +6,7 @@ const {order_status}=require('../types/status')
 const {AxiosInstancePayment} =require('../axiosConfig')
 const {Products} =require('../models/Products')
 const {Payment}=require('../models/PaymentModel')
+const {user}=require('../models/BaseModel')
 module.exports={
     create_payment:async(req,res)=>{
        const {orderId}=req.body;
@@ -158,7 +159,18 @@ module.exports={
                 const orderId=item.orderId;
                 const order=await Orders.findById(orderId)
                 if(order.status===order_status.AwaitingDelivering){
-                    shapedPayments.push(item)
+                    const {name}= await user.findById(order.userId)
+                    let tempProducts=[]
+                    for(let j=0;j<order.products.length;j++){
+                        const {productId,quantity}=order.products[j];
+                        const PItem=await Products.findById(productId)
+                      
+                       
+                        if(PItem){
+                            tempProducts.push({quantity,...PItem.toObject({ virtuals: false })})
+                        }
+                    }
+                    shapedPayments.push({...item.toObject({ virtuals: false }),name,products:tempProducts})
                 }
             }
             return res.status(200).send({status:true,payments:shapedPayments})

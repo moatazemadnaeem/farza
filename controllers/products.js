@@ -114,7 +114,7 @@ module.exports={
             if(!product){
                 throw new BadReqErr('not found the product')
             }
-            let newImgPath=product.imgPath.map((item)=>item!==url)
+            let newImgPath=product.imgPath.filter((item)=>item!==url)
            
             product.imgPath=newImgPath;
             await product.save()
@@ -286,5 +286,28 @@ module.exports={
             throw new BadReqErr(err.message)
         }
       
-    }
+    },
+    remove_video_product:async(req,res)=>{
+        const {productId,userId,sellerId,url}=req.body;
+        if(!productId||!userId||!sellerId||!url){
+            throw new BadReqErr('Please provide product Id')
+        }
+        try{
+            const product= await Products.findOne({_id:productId,userId,sellerId})
+            if(!product){
+                throw new BadReqErr('not found the product')
+            }
+            let newVideoPath=product.videoPath.filter((item)=>item!==url)
+           
+            product.videoPath=newVideoPath;
+            await product.save()
+            let L=product.videoPath.length-1;
+            if(L<0){
+               return res.status(200).send({status:true,videos:product.videoPath,lastImg:'there is no last image'})
+            }
+            return res.status(200).send({status:true,images:product.videoPath,lastImg:product.videoPath[L]})
+        }catch(err){
+            throw new BadReqErr(err.message)
+        }
+    },
 }
