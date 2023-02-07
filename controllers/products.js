@@ -219,7 +219,7 @@ module.exports={
     },
     add_video_product:async(req,res)=>{
         const {productId,userId}=req.body;
-        if(!productId){
+        if(!productId||!userId){
             throw new BadReqErr('Please provide product Id')
         }
         if(userId!==req.currentUser.id){
