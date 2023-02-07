@@ -95,7 +95,11 @@ module.exports={
                 product.imgPath.push(imageDetails.url)
                 await product.save()
              }
-             return res.status(200).send({status:true,images:product.imgPath,lastImg:product.imgPath[product.imgPath.length-1]})
+             let L=product.imgPath.length-1;
+             if(L<0){
+                return res.status(200).send({status:true,images:product.imgPath,lastImg:'there is no last image'})
+             }
+             return res.status(200).send({status:true,images:product.imgPath,lastImg:product.imgPath[L]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
@@ -250,6 +254,10 @@ module.exports={
                     await product.save()
                 }
              }
+             let L=product.videoPath.length-1;
+             if(L<0){
+                return res.status(200).send({status:true,msg:'done',videos:product.videoPath,lastVideo:'there is no last video'})
+            }
             return res.status(200).send({status:true,msg:'done',videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
