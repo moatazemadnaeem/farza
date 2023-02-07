@@ -243,36 +243,37 @@ module.exports={
                 let rand=GetRandString()
                 const fileName = item.name.split('.')[0]
                 const fileFormat = item.mimetype.split('/')[1]
-                const file= await s3.putObject({
-                Body: JSON.stringify({key:item}),
-                Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                Key: `videos/${fileName}${rand}.${fileFormat}`,
-                }).promise()
-                // let my_file = await s3.getObject({
+                // const file= await s3.putObject({
+                // Body: JSON.stringify({key:item}),
+                // Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
+                // Key: `videos/${fileName}${rand}.${fileFormat}`,
+                // }).promise()
+                // // let my_file = await s3.getObject({
+                // //     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
+                // //     Key: `videos/${fileName}${rand}.${fileFormat}`,
+                // // }).promise()
+    
+                // // console.log('my file',JSON.parse(my_file))
+                // // const getUrl=()=>{
+                // //     return new Promise((resolve,reject)=>{
+                // //         s3.getSignedUrl('getObject',{ Bucket: "cyclic-mushy-cow-lapel-ca-central-1",Key: `videos/${fileName}${rand}.${fileFormat}`},(err, url) => {
+                // //             if (err) {
+                // //               reject(err);
+                // //             } else {
+                // //               resolve(url);
+                // //             }})
+                // //     })
+                // // }
+                // // // const URL=await getUrl()
+                // let s3File = await s3.getObject({
                 //     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
                 //     Key: `videos/${fileName}${rand}.${fileFormat}`,
-                // }).promise()
-    
-                // console.log('my file',JSON.parse(my_file))
-                // const getUrl=()=>{
-                //     return new Promise((resolve,reject)=>{
-                //         s3.getSignedUrl('getObject',{ Bucket: "cyclic-mushy-cow-lapel-ca-central-1",Key: `videos/${fileName}${rand}.${fileFormat}`},(err, url) => {
-                //             if (err) {
-                //               reject(err);
-                //             } else {
-                //               resolve(url);
-                //             }})
-                //     })
-                // }
-                // // const URL=await getUrl()
-                let s3File = await s3.getObject({
-                    Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                    Key: `videos/${fileName}${rand}.${fileFormat}`,
-                  }).promise()
-                  console.log(JSON.parse(s3File))
-
-                if(s3File){
-                    videos.push(JSON.parse(s3File))
+                //   }).promise()
+                //   console.log(JSON.parse(s3File))
+                let file=await uploadVideosToCloudinary(item.data,fileFormat,'any')
+                console.log(file)
+                if(file){
+                    videos.push(file.url)
                 }
              }
             return res.send({msg:'done',videos})

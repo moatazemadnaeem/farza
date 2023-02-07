@@ -1,6 +1,7 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const {BadReqErr}=require('../errorclasses/badReq')
+const fs=require('fs')
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -26,16 +27,19 @@ const uploadToCloudinary = async (fileString, format) => {
     throw new BadReqErr(error.msg);
   }
 };
-const uploadVideosToCloudinary = async (data, mimetype,path) => {
+const uploadVideosToCloudinary = async (buffer, mimetype) => {
   try {
-    const stream = data.toString('binary');
-    const buffer = Buffer.from(stream, 'binary');
-    const result = await cloudinary.uploader.upload_stream({
+    
+     const tempFilePath = `/tmp/${Date.now()}.${mimetype.split('/')[1]}`;
+     fs.writeFileSync(tempFilePath, buffer);
+
+     const result = await cloudinary.uploader.upload(tempFilePath, {
       resource_type: 'video',
       public_id: `${Date.now()}`,
-      buffer,
       format: mimetype.split('/')[1],
     });
+
+    fs.unlinkSync(tempFilePath);
     return result;
   } catch (error) {
     throw new BadReqErr(error.message);
