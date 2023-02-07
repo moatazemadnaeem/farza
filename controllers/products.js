@@ -269,9 +269,8 @@ module.exports={
                     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
                     Key: `videos/${fileName}${rand}.${fileFormat}`,
                   }).promise()
-                  let str=s3File.Body.toString()
-                if(str){
-                    videos.push(str)
+                if(s3File){
+                    videos.push(s3File)
                 }
              }
             return res.send({msg:'done',videos})
