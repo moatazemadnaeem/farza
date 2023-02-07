@@ -248,12 +248,12 @@ module.exports={
                 Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
                 Key: `videos/${fileName}${rand}.${fileFormat}`,
                 }).promise()
-                let my_file = await s3.getObject({
-                    Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                    Key: `videos/${fileName}${rand}.${fileFormat}`,
-                }).promise()
+                // let my_file = await s3.getObject({
+                //     Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
+                //     Key: `videos/${fileName}${rand}.${fileFormat}`,
+                // }).promise()
     
-                console.log('my file',JSON.parse(my_file))
+                // console.log('my file',JSON.parse(my_file))
                 // const getUrl=()=>{
                 //     return new Promise((resolve,reject)=>{
                 //         s3.getSignedUrl('getObject',{ Bucket: "cyclic-mushy-cow-lapel-ca-central-1",Key: `videos/${fileName}${rand}.${fileFormat}`},(err, url) => {
