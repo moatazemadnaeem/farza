@@ -72,9 +72,7 @@ module.exports={
         if(!productId||!userId||!sellerId){
             throw new BadReqErr('Please provide product Id')
         }
-        if(userId!==req.currentUser.id){
-            throw new BadReqErr('Not allowed to do this')
-        }
+       
         try{
             const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
@@ -225,9 +223,7 @@ module.exports={
         if(!productId||!userId||!sellerId){
             throw new BadReqErr('Please provide product Id')
         }
-        if(userId!==req.currentUser.id){
-            throw new BadReqErr('Not allowed to do this')
-        }
+       
         try{
             const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
