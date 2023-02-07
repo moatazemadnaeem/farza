@@ -218,9 +218,12 @@ module.exports={
         }
     },
     add_video_product:async(req,res)=>{
-        const {productId}=req.body;
+        const {productId,userId}=req.body;
         if(!productId){
             throw new BadReqErr('Please provide product Id')
+        }
+        if(userId!==req.currentUser.id){
+            throw new BadReqErr('Not allowed to do this')
         }
         try{
             const product= await Products.findById(productId)
