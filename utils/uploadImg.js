@@ -37,7 +37,7 @@ const uploadVideosToCloudinary = async (buffer,mimetype,name) => {
      const result = await cloudinary.uploader.upload(tempFilePath, {
       resource_type: 'video',
       public_id: `${Date.now()}`,
-      format: mimetype.split('/')[1],
+      format:mimetype,
     });
 
     fs.unlinkSync(tempFilePath);
