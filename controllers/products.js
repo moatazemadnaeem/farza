@@ -68,12 +68,15 @@ module.exports={
         
     },
     add_image_product:async(req,res)=>{
-        const {productId}=req.body;
-        if(!productId){
+        const {productId,userId,sellerId}=req.body;
+        if(!productId||!userId||!sellerId){
             throw new BadReqErr('Please provide product Id')
         }
+        if(userId!==req.currentUser.id){
+            throw new BadReqErr('Not allowed to do this')
+        }
         try{
-            const product= await Products.findById(productId)
+            const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
                 throw new notfound('not found the product')
             }
@@ -226,7 +229,7 @@ module.exports={
             throw new BadReqErr('Not allowed to do this')
         }
         try{
-            const product= await Products.findOne({_id:productId,userId,sellerId})
+            const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
                 throw new notfound('not found the product')
             }
@@ -251,7 +254,7 @@ module.exports={
                     await product.save()
                 }
              }
-            return res.send({msg:'done',videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
+            return res.status(200).send({status:true,msg:'done',videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
