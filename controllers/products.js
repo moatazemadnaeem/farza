@@ -78,7 +78,7 @@ module.exports={
         try{
             const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
-                throw new notfound('not found the product')
+                throw new BadReqErr('not found the product')
             }
             let img=[];
             if(req.files){
@@ -231,7 +231,7 @@ module.exports={
         try{
             const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
             if(!product){
-                throw new notfound('not found the product')
+                throw new BadReqErr('not found the product')
             }
             
             let video=[];
