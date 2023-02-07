@@ -121,7 +121,7 @@ module.exports={
                 id:_id,
                 status:true,
                 IsSeller:role===roles.SELLER?true:false,
-                IsAdmin:roles.ADMIN?true:false,
+                IsAdmin:role===roles.ADMIN?true:false,
                 images:imgPath,
                 lastImg:imgPath[imgPath.length-1]
             })
