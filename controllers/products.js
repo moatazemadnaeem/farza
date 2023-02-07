@@ -4,12 +4,10 @@ const mongoose =require('mongoose')
 const {Products}=require('../models/Products')
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3()
-
 const {Seller} =require('../models/Seller')
 const {GetRandString}=require('../utils/randomString')
 const {bufferToDataURI}=require('../utils/turnBuffertoDataURI')
 const {uploadToCloudinary,uploadVideosToCloudinary}=require('../utils/uploadImg')
-const {readFileSync,unlinkSync}=require('fs')
 module.exports={
     add_seller_product:async(req,res)=>{
         const {sellerId,...data}=req.body;
@@ -242,28 +240,19 @@ module.exports={
             for(let i=0;i<video.length;i++){
                 let item=video[i]
                 console.log(item)
-                //const fileFormat = item.mimetype.split('/')[1]
-               // const { base64 } = bufferToDataURI(fileFormat, item.data)
+                let rand=GetRandString()
+                const fileName = item.name.split('.')[0]
+                const fileFormat = item.mimetype.split('/')[1]
                 const file= await s3.putObject({
                 Body: JSON.stringify({key:item}),
                 Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                Key: "some_files/my_file.json",
+                Key: `videos/${fileName}${rand}.${fileFormat}`,
                 }).promise()
-                console.log('file',file)
-                let my_file = await s3.getObject({
-                    Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
-                    Key: "some_files/my_file.json",
-                }).promise()
-                console.log('my_file',my_file)
-                // let resVideo=await uploadVideosToCloudinary(item.data, item.mimetype,item.tempFilePath)
-                // if(resVideo){
-                //   console.log(resVideo)
-                //   videos.push(resVideo)
-                // }
-              
+                if(file){
+                    videos.push(`cyclic-mushy-cow-lapel-ca-central-1/videos/${fileName}${rand}.${fileFormat}`)
+                }
              }
             return res.send({msg:'done',videos})
-           // return res.status(200).send({status:true,videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
         }catch(err){
             throw new BadReqErr(err.message)
         }
