@@ -218,15 +218,15 @@ module.exports={
         }
     },
     add_video_product:async(req,res)=>{
-        const {productId,userId}=req.body;
-        if(!productId||!userId){
+        const {productId,userId,sellerId}=req.body;
+        if(!productId||!userId||!sellerId){
             throw new BadReqErr('Please provide product Id')
         }
         if(userId!==req.currentUser.id){
             throw new BadReqErr('Not allowed to do this')
         }
         try{
-            const product= await Products.findById(productId)
+            const product= await Products.findOne({_id:productId,userId,sellerId})
             if(!product){
                 throw new notfound('not found the product')
             }
@@ -248,6 +248,7 @@ module.exports={
                 console.log(file)
                 if(file){
                     product.videoPath.push(file.url)
+                    await product.save()
                 }
              }
             return res.send({msg:'done',videos:product.videoPath,lastVideo:product.videoPath[product.videoPath.length-1]})
