@@ -248,8 +248,20 @@ module.exports={
                 Bucket: "cyclic-mushy-cow-lapel-ca-central-1",
                 Key: `videos/${fileName}${rand}.${fileFormat}`,
                 }).promise()
-                if(file){
-                    videos.push(`cyclic-mushy-cow-lapel-ca-central-1/videos/${fileName}${rand}.${fileFormat}`)
+                const getUrl=()=>{
+                    return new Promise((resolve,reject)=>{
+                        s3.getSignedUrl('getObject',{ Bucket: "cyclic-mushy-cow-lapel-ca-central-1",Key: `videos/${fileName}${rand}.${fileFormat}`},(err, url) => {
+                            if (err) {
+                              reject(err);
+                            } else {
+                              resolve(url);
+                            }})
+                    })
+                }
+                const URL=await getUrl()
+               
+                if(URL){
+                    videos.push(URL)
                 }
              }
             return res.send({msg:'done',videos})
