@@ -34,6 +34,7 @@ const {list_accepted_products_route} = require('./routes/ProductRoutes/list_acce
 const {edit_product} = require('./routes/ProductRoutes/editProduct')
 const {add_video_product_route} = require('./routes/ProductRoutes/add_video_product')
 const {disallowProduct} = require('./routes/ProductRoutes/disallow_product')
+const {remove_image_product_route} = require('./routes/ProductRoutes/remove_img_product')
 // Orders
 const {create_order_route}=require('./routes/OrderRoutes/create-order')
 const {awaiting_delivering_route}=require('./routes/OrderRoutes/awaiting_delivering')
@@ -111,6 +112,7 @@ app.use('/api/products',list_accepted_products_route)
 app.use('/api/products',edit_product)
 app.use('/api/products',disallowProduct)
 app.use('/api/products',add_video_product_route)
+app.use('/api/products',remove_image_product_route)
 //Orders
 app.use('/api/orders',create_order_route)
 app.use('/api/orders',awaiting_delivering_route)

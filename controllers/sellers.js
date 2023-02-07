@@ -130,7 +130,7 @@ module.exports={
             throw new BadReqErr('You are not allowed to do this')
         }
         try{
-            const products= await Products.find({sellerId})
+            const products= await Products.find({sellerId,accepted:true})
             if(!products){
                 throw new notfound('not found the products for this seller')
             }
