@@ -269,6 +269,8 @@ module.exports={
             const o=[]
             for(let i=0;i<orders.length;i++){
                 const item=orders[i]
+                const {name}= await user.findById(item.userId)
+
                 let products=item.products;
                 let tempProducts=[]
                 for(let j=0;j<products.length;j++){
@@ -280,7 +282,7 @@ module.exports={
                         tempProducts.push({quantity,...PItem.toObject({ virtuals: false }),lastVideo})
                     }
                 }
-                o.push({...item.toObject({ virtuals: false }),products:tempProducts})
+                o.push({...item.toObject({ virtuals: false }),products:tempProducts,name})
             }
            
             return res.send({status:true,orders:o})

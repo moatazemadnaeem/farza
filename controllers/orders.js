@@ -107,7 +107,7 @@ module.exports={
     },
     get_all_orders_by_user:async(req,res)=>{
         try{
-            const orders=await Orders.find({userId:req.currentUser.id,status: { $in: [order_status.AwaitingDelivering,order_status.AwaitingPayment,order_status.Delivered,order_status.AwaitingAcceptByAdmin,order_status.REJECTED] }})
+            const orders=await Orders.find({userId:req.currentUser.id,status: { $in: [order_status.AwaitingDelivering,order_status.AwaitingPayment,order_status.Delivered] }})
             if(!orders){
                 throw new notfound('can not find orders for this user')
             }
