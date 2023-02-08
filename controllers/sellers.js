@@ -134,7 +134,14 @@ module.exports={
             if(!products){
                 throw new notfound('not found the products for this seller')
             }
-            return res.status(200).send({status:true,products})
+            let shapedProducts=products.map((item)=>{
+                return {
+                    ...item.toObject({ virtuals: false }),
+                    lastImg:item.imgPath[item.imgPath.length-1],
+                    lastVideo:item.videoPath[item.videoPath.length-1]
+                }
+            })
+            return res.status(200).send({status:true,products:shapedProducts})
         }catch(err){
             throw new BadReqErr(err.message)
         }
