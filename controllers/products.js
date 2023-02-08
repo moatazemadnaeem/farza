@@ -252,7 +252,7 @@ module.exports={
         }
        
         try{
-            const product= await Products.findOne({_id:productId,userId,sellerId,accepted:true})
+            const product= await Products.findOne({_id:productId,userId,sellerId})
             if(!product){
                 throw new BadReqErr('not found the product')
             }

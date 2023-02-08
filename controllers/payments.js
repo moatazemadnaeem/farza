@@ -156,6 +156,7 @@ module.exports={
             let shapedPayments=[]
             for(let i=0;i<payments.length;i++){
                 const item=payments[i];
+                const {mobile,customer_details}=item
                 const orderId=item.orderId;
                 const order=await Orders.findById(orderId)
                 if(order.status===order_status.AwaitingDelivering){
@@ -170,7 +171,7 @@ module.exports={
                             tempProducts.push({quantity,...PItem.toObject({ virtuals: false })})
                         }
                     }
-                    shapedPayments.push({...item.toObject({ virtuals: false }),name,products:tempProducts})
+                    shapedPayments.push({mobile,address:customer_details.address,name,products:tempProducts})
                 }
             }
             return res.status(200).send({status:true,payments:shapedPayments})
@@ -259,12 +260,28 @@ module.exports={
     getAwaitingAccepted:async(req,res)=>{
         try{
             const orders=await Orders.find({status:order_status.AwaitingAcceptByAdmin})
-
             if(!orders){
                 throw new BadReqErr('can not find orders to be accepted')
             }
            
-            return res.status(200).send({status:true,orders})
+            const o=[]
+            for(let i=0;i<orders.length;i++){
+                const item=orders[i]
+                let products=item.products;
+                let tempProducts=[]
+                for(let j=0;j<products.length;j++){
+                    const {productId,quantity}=products[j];
+                    const PItem=await Products.findById(productId)
+                    console.log('p its self',PItem)
+                    if(PItem){
+                        tempProducts.push({quantity,...PItem.toObject({ virtuals: false })})
+                    }
+                }
+                o.push({...item.toObject({ virtuals: false }),products:tempProducts})
+            }
+           
+            return res.send({status:true,orders:o})
+     
        }catch(err){
         throw new BadReqErr(err.message)
        }
