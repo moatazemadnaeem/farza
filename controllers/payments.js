@@ -156,7 +156,7 @@ module.exports={
             let shapedPayments=[]
             for(let i=0;i<payments.length;i++){
                 const item=payments[i];
-                const {mobile,customer_details}=item
+                const {mobile,customer_details,lat,lon}=item
                 const orderId=item.orderId;
                 const order=await Orders.findById(orderId)
                 if(order.status===order_status.AwaitingDelivering){
@@ -168,10 +168,12 @@ module.exports={
                       
                        
                         if(PItem){
-                            tempProducts.push({quantity,...PItem.toObject({ virtuals: false })})
+                            let lastVideo=PItem.videoPath[PItem.videoPath.length-1]
+                            console.log(lastVideo)
+                            tempProducts.push({quantity,...PItem.toObject({ virtuals: false }),lastVideo})
                         }
                     }
-                    shapedPayments.push({mobile,address:customer_details.address,name,products:tempProducts})
+                    shapedPayments.push({mobile,address:customer_details.address,name,products:tempProducts,lat,lon})
                 }
             }
             return res.status(200).send({status:true,payments:shapedPayments})
@@ -274,7 +276,8 @@ module.exports={
                     const PItem=await Products.findById(productId)
                     console.log('p its self',PItem)
                     if(PItem){
-                        tempProducts.push({quantity,...PItem.toObject({ virtuals: false })})
+                        let lastVideo=PItem.videoPath[PItem.videoPath.length-1]
+                        tempProducts.push({quantity,...PItem.toObject({ virtuals: false }),lastVideo})
                     }
                 }
                 o.push({...item.toObject({ virtuals: false }),products:tempProducts})
