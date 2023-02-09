@@ -279,7 +279,8 @@ module.exports={
                     console.log('p its self',PItem)
                     if(PItem){
                         let lastVideo=PItem.videoPath[PItem.videoPath.length-1]
-                        tempProducts.push({quantity,...PItem.toObject({ virtuals: false }),lastVideo})
+                        let lastImg=PItem.imgPath[PItem.imgPath.length-1]
+                        tempProducts.push({quantity,...PItem.toObject({ virtuals: false }),lastVideo,lastImg})
                     }
                 }
                 o.push({...item.toObject({ virtuals: false }),products:tempProducts,name})
